@@ -1,0 +1,149 @@
+<div class="main-content">
+  <div class="container-fluid">
+      <div class="row">
+          <div class="col-md-4 col-sm-12 col-xs-12">
+              <button data-toggle="modal" 
+                        data-target="#formRegistro" 
+                        class="btn btn-lg btn-block btn-primary">
+                  <i class="material-icons">add</i>AGREGAR PUNTO DE ATENCIÓN</button>
+          </div>
+      </div>
+      <div class="row">
+          <div class="col-md-12">
+              <div class="card">
+                  <div class="card-header card-header-success">
+                      <h4 class="card-title ">Puntos de Atención</h4>
+                      <p class="card-category"> Listado de puntos de atención registrados</p>
+                  </div>
+                  <div class="card-body">
+                      <div class="table-responsive">
+                          <table id="ejemplo" class="table">
+                              <thead class=" text-primary">
+                                  <th>
+                                      ID
+                                  </th>
+                                  <th>
+                                      REGIÓN
+                                  </th>
+                                  <th>
+                                      NOMBRE
+                                  </th>
+                                  <th>
+                                      ESTADO
+                                  </th>
+                                  <th>ACCIONES</th>
+                              </thead>
+                              <tbody>
+                                  <tr *ngFor="let punto of puntosAtencion">
+                                      <td>
+                                          {{ punto.id_punto_atencion }}
+                                      </td>
+                                      <td>
+                                          {{ getRegion(punto.region) | uppercase }}
+                                      </td>
+                                      <td>
+                                          {{ punto.nombre | uppercase }}
+                                      </td>
+                                      <td>
+                                          {{ getEstado(punto.estado) | uppercase }}
+                                      </td>
+                                      <td>
+                                        <button data-toggle="modal" data-target="#formActualizacion"
+                                            (click)="editar(punto)" class="btn btn-primary">Modificar</button>
+                                      </td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          
+      </div>
+      <div class="row">
+          <!-- Formulario para agregar punto de atención -->
+        <div class="modal fade" id="formRegistro" tabindex="-1" role="dialog" aria-labelledby="formRegistro" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Agregar un nuevo punto de atención</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="puntoAtencionForm">
+                        <div class="form-group">
+                          <mat-form-field>
+                            <mat-label>Región</mat-label>
+                            <mat-select formControlName="regionPunto">
+                                <mat-option *ngFor="let region of regiones" [value]="region.codigo">
+                                    {{ region.nombre }}
+                                </mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                        </div>
+                        <div class="form-group">
+                            <mat-form-field class="">
+                                <input formControlName="nombrePuntoAtencion" matInput placeholder="Nombre de Punto de Atención">
+                            </mat-form-field>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                <button (click)="puntoAtencionForm.reset()" type="button" class="btn btn-secondary" data-dismiss="modal">CERRAR</button>
+                <button (click)="guardarPunto()" data-dismiss="modal" [disabled]="!puntoAtencionForm.valid" class="btn btn-primary">GUARDAR PUNTO DE ATENCIÓN</button>
+                </div>
+            </div>
+            </div>
+        </div>
+      </div>
+      <div class="row">
+        <!-- Formulario para agregar punto de atención -->
+      <div class="modal fade" id="formActualizacion" tabindex="-1" role="dialog" aria-labelledby="formActualizacion" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+              <h5 class="modal-title">Actualizar punto de atención</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+              </div>
+              <div class="modal-body">
+                  <form #actFormPunto="ngForm">
+                      <div class="form-group">
+                        <mat-form-field class="">
+                            <mat-select required [disabled]="true" name="region" #region="ngModel" [(ngModel)]="punto.region">
+                                <mat-option *ngFor="let region of regiones" [value]="punto.region">
+                                    {{ region.nombre }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                      </div>
+                      <div class="form-group">
+                          <mat-form-field class="">
+                              <input required name="nombre" #nombre="ngModel" matInput [(ngModel)]="punto.nombre">
+                          </mat-form-field>
+                      </div>
+                      <div class="form-group">
+                        <mat-form-field>
+                            <mat-label>Estado</mat-label>
+                            <mat-select required name="estado" #estado="ngModel" [(ngModel)]="punto.estado">
+                                <mat-option *ngFor="let estado of estados" [value]="punto.estado">
+                                    {{ estado.nombre }}
+                                </mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                    </div>
+                  </form>
+              </div>
+              <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">CERRAR</button>
+              <button (click)="actualizarPunto()" data-dismiss="modal" [disabled]="!actFormPunto.valid" class="btn btn-primary">ACTUALIZAR PUNTO DE ATENCIÓN</button>
+              </div>
+          </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,23 @@
+<div class="wrapper fadeInDown">
+    <div id="formContent">
+      <!-- Tabs Titles -->
+  
+      <!-- Icon -->
+      <div class="fadeIn first">
+        <img src="assets/img/iniciar-sesion-2.svg" id="icon" alt="User Icon" />
+      </div>
+  
+      <!-- Login Form -->
+      <form [formGroup]="formLogin">
+        <input formControlName="usuario" type="text" id="login" class="fadeIn second" name="login" placeholder="login">
+        <input formControlName="password" type="password" id="password" class="fadeIn third" name="login" placeholder="password">
+        <input (click)="login()" [disabled]="!formLogin.valid" type="submit" class="fadeIn fourth" value="Log In">
+      </form>
+  
+      <!-- Remind Passowrd -->
+      <div id="formFooter">
+        <a class="underlineHover" href="#">Forgot Password?</a>
+      </div>
+  
+    </div>
+  </div>
