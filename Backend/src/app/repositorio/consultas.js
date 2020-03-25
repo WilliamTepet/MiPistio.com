@@ -47,7 +47,7 @@ const getPuntoAtencion = async () => {
 const getUsuario = async (pUsuario, pPassword) => {
     try {
         const result = await pool.query(`SELECT * FROM mipistio_catalogo.cat_usuarios 
-                            where nombre = '${pUsuario}' and password = '${pPassword}' and cod_rol = 5`);
+        where nombre = '${pUsuario}' and password = '${pPassword}' and cod_rol = 5`);
         return result.rows;
     } catch (e) {
         console.error('Error al consultar el usuario ', e);
