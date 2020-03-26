@@ -63,8 +63,15 @@ function getLogin(req) {
     if (headers.authorization) {
         let auth = decode(headers.authorization.split(" ")[1]);
         auth = auth.split(':');
-        let login = { user: auth[0], password: auth[1], auth: true };
-        return login
+        let login = { user: auth[0], password: auth[1]};
+        if (login.user == '' || login.password == ''){
+            //auten = false;
+           // console.log(auten);
+            return {auth: false};
+        }
+        else{
+            return { user: auth[0], password: auth[1], auth: true};
+        }
     }
 
     return { user: '', password: '', auth: false };
