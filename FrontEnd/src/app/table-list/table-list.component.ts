@@ -1,9 +1,11 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import Swal from 'sweetalert2'
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { PuntoAtencion } from '../modelos/PuntoAtencionModelo';
 
-import * as $ from 'jquery';
 import * as moment from 'moment';
 import 'datatables.net';
 import 'datatables.net-bs4';
@@ -13,6 +15,7 @@ declare interface REGION {
   id: number;
   nombre: string;
 }
+
 
 declare interface ESTADO {
   id: number;
@@ -32,21 +35,19 @@ declare interface DATO {
   ipModifica: string;
 }
 
+export interface PeriodicElement {
+  name: string;
+  position: number;
+  weight: number;
+  symbol: string;
+}
+
 @Component({
   selector: 'app-table-list',
   templateUrl: './table-list.component.html',
   styleUrls: ['./table-list.component.css']
 })
 export class TableListComponent implements OnInit {
-
-  // @ViewChild('dataTable', {static: true}) table: ElementRef;
-  dataTable: any;
-  punto: any = {
-    nombre: '',
-    region: '',
-    estado: ''
-  };
-  puntoUpdate: PuntoAtencion;
 
   constructor(private servicio: ServicioService) { 
     this.puntoAtencionForm = new FormGroup({
@@ -61,9 +62,21 @@ export class TableListComponent implements OnInit {
     });
   }
 
-  puntosAtencion: any[] = [
-    
-  ];
+  displayedColumns: string[] = ['id', 'region', 'nombre', 'estado', 'acciones'];
+  dataSource: MatTableDataSource<any> = new MatTableDataSource;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  
+  punto: any = {
+    nombre: '',
+    region: '',
+    estado: ''
+  };
+
+  puntoUpdate: PuntoAtencion;
+  
+
+  puntosAtencion: any[] = [];
 
   regiones: any = [];
 
@@ -79,7 +92,9 @@ export class TableListComponent implements OnInit {
   catalogos: any = [];
 
   async ngOnInit() {
-    // $.noConflict();
+
+    this.puntosAtencion = [];
+
     this.regiones = await this.getDatos(1);
     this.servicio.getIp()
       .subscribe(res => {
@@ -87,7 +102,14 @@ export class TableListComponent implements OnInit {
       }, err => console.log('Hubo un error al obtener la ip ', err));
     
     await this.servicio.getPuntos().toPromise().then(res => {
-      this.puntosAtencion = res;
+      res.forEach(element => {
+        let punto = { id: element.id_punto_atencion, nombre: element.nombre, region: element.region, estado: element.estado };
+        this.puntosAtencion.push(punto);
+      });
+      console.log('Puntos de atencion ', this.puntosAtencion);
+      this.dataSource = new MatTableDataSource(this.puntosAtencion);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
     }).catch(e => console.log('Ocurrio un error ', e))
 
   }
@@ -162,5 +184,16 @@ export class TableListComponent implements OnInit {
   public actualizarPunto() {
     console.log('Actualizar!');
   }
+
+  public applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+  
 
 }

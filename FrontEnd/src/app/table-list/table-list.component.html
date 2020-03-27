@@ -16,8 +16,12 @@
                       <p class="card-category"> Listado de puntos de atención registrados</p>
                   </div>
                   <div class="card-body">
+                    <mat-form-field>
+                        <mat-label>Filtro</mat-label>
+                        <input matInput (keyup)="applyFilter($event)">
+                      </mat-form-field>
                       <div class="table-responsive">
-                          <table id="ejemplo" class="table">
+                          <!-- <table id="ejemplo" class="table">
                               <thead class=" text-primary">
                                   <th>
                                       ID
@@ -53,7 +57,46 @@
                                       </td>
                                   </tr>
                               </tbody>
+                          </table> -->
+                          <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+                          
+                            <!-- Position Column -->
+                            <ng-container matColumnDef="id">
+                              <th mat-header-cell *matHeaderCellDef> Id. </th>
+                              <td mat-cell *matCellDef="let element"> {{ element.id }} </td>
+                            </ng-container>
+                          
+                            <!-- Name Column -->
+                            <ng-container matColumnDef="nombre">
+                              <th mat-header-cell *matHeaderCellDef> Nombre </th>
+                              <td mat-cell *matCellDef="let element"> {{ element.nombre }} </td>
+                            </ng-container>
+                          
+                            <!-- Weight Column -->
+                            <ng-container matColumnDef="region">
+                              <th mat-header-cell *matHeaderCellDef> Region </th>
+                              <td mat-cell *matCellDef="let element"> {{ getRegion(element.region) }} </td>
+                            </ng-container>
+                          
+                            <!-- Symbol Column -->
+                            <ng-container matColumnDef="estado">
+                              <th mat-header-cell *matHeaderCellDef> Estado </th>
+                              <td mat-cell *matCellDef="let element"> {{ getEstado(element.estado) }} </td>
+                            </ng-container>
+
+                            <!-- acciones Column -->
+                            <ng-container matColumnDef="acciones">
+                                <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                                <td mat-cell *matCellDef="let element"> 
+                                    <button data-toggle="modal" data-target="#formActualizacion"
+                                    (click)="editar(punto)" class="btn btn-primary">Modificar</button> 
+                                </td>
+                              </ng-container>
+                          
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                           </table>
+                          <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
                       </div>
                   </div>
               </div>
