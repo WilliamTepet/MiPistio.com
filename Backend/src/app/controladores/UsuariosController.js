@@ -4,13 +4,20 @@ const { getLogin } = require('../servicios/CatalogosServicio');
 
 
 router.get('/listado', async (req, res) => {
-    let getUser = await obtenerUsuarios();
-    console.log(getUser);
-    res.json(getUser);
+    let login = await getLogin(req);
+    let status, resultado;
+    if (login.auth) {
+        resultado = await obtenerUsuarios();
+        status = 200;
+    } else {
+        status = 401;
+        resultado = { message: 'No tiene autorizacion' };
+    }
+    res.status(status).json(resultado);
 });
 
 router.post('/agregar', async (req, res)=>{
-    let login = getLogin(req);
+    let login = await getLogin(req);
     let datos = req.body;
     if (login.auth) {
         const usuario =  await verificarUsuario(datos.cui, datos.email);
@@ -55,7 +62,7 @@ router.post('/agregar', async (req, res)=>{
 
 
 router.put('/actualizar/:id', async (req, res)=>{
-    let login = getLogin(req);
+    let login = await getLogin(req);
     let datos = req.body;
     let usuarioId = req.params.id;  
     if (login.auth) {

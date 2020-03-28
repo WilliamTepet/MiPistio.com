@@ -62,7 +62,7 @@ async function getLogin(req) {
         else{
             const user = await getUsuario(login.user, login.password);
             if (user.length === 1) {
-                return { auth: true }
+                return { user: auth[0], password: auth[1], auth: true }
             }
             else {
                 return {auth: false};
