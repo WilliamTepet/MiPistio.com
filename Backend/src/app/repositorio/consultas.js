@@ -44,6 +44,20 @@ const getPuntoAtencion = async () => {
     
 }
 
+const updatePuntoAtencion = async (punto) => {
+    try {
+        await pool.query(`UPDATE mipistio_catalogo.cat_punto_atencion 
+                                        SET estado = ${punto.estado}, nombre = '${punto.nombre}',
+                                        usuario_modifica = '${punto.usuarioModifica}', fecha_modifica = '${punto.fechaModifica}',
+                                        ip_modifica = '${punto.ipModifica}'
+                                        WHERE id_punto_atencion = ${punto.id}`);
+        return { status:1, message: 'punto actualizado' };
+    } catch (e) {
+        console.log(e)
+        return [];
+    }
+}
+
 const getUsuario = async (pUsuario, pPassword) => {
     try {
         const result = await pool.query(`SELECT * FROM mipistio_catalogo.cat_usuarios 
@@ -51,6 +65,18 @@ const getUsuario = async (pUsuario, pPassword) => {
         return result.rows;
     } catch (e) {
         console.error('Error al consultar el usuario ', e);
+        return [];
+    }
+}
+
+const getUsuariosByPuntoAtencion = async (punto) => {
+    try {
+        const result = await pool.query(`SELECT COUNT(*) as puntos
+                                            FROM mipistio_catalogo.cat_usuario_punto_atencion 
+                                            WHERE cod_punto_atencion = ${punto}`);
+        return result.rows[0];
+    } catch (e) {
+        console.error('Ocurrio un error ', e);
         return [];
     }
 }
@@ -95,4 +121,14 @@ const insertDatoCatalogo = async (pDatoCatalogo) => {
 
 
 
-module.exports = { getCatalogos, getCatalogo, getDatoCatalogo, insertCatalogo, getUsuario, insertDatoCatalogo, getPuntoAtencion };
+module.exports = { 
+    getCatalogos,
+    getCatalogo,
+    getDatoCatalogo,
+    insertCatalogo,
+    getUsuario,
+    insertDatoCatalogo,
+    getPuntoAtencion,
+    getUsuariosByPuntoAtencion,
+    updatePuntoAtencion
+};

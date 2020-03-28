@@ -1,63 +1,55 @@
 const decode = require('atob');
-const { getCatalogos, getPuntoAtencion, getDatoCatalogo, insertCatalogo, getUsuario, insertDatoCatalogo } = require('../repositorio/consultas');
+const { 
+    getCatalogos,
+    getPuntoAtencion,
+    getDatoCatalogo,
+    insertCatalogo,
+    getUsuario,
+    insertDatoCatalogo,
+    getUsuariosByPuntoAtencion,
+    updatePuntoAtencion
+} = require('../repositorio/consultas');
 
 
-async function obtenerCatalogos(pUsuario, pPassword) {
-    const user = await getUsuario(pUsuario, pPassword);
-    console.log(user);
-    if (user.length === 1) {
-        const result = await getCatalogos();
-        return result;
-    }
-
-    return { message: 'Error al obtener el catalogo' };
+async function obtenerCatalogos() {
+    const result = await getCatalogos();
+    return result;
 }
 
-async function obtenerPuntosAtencion(pUsuario, pPassword) {
-    const user = await getUsuario(pUsuario, pPassword);
-    console.log('punto atencion', user);
-    if (user.length === 1) {
-        const result = await getPuntoAtencion();
-        return result;
-    }
-
-    return { message: 'Error al obtener el catalogo' };
+async function obtenerPuntosAtencion() {
+    const result = await getPuntoAtencion();
+    return result;
 }
 
-async function obtenerDatoCatalogo(pUsuario, pPassword, pCodigo) {
-    const user = await getUsuario(pUsuario, pPassword);
-    console.log(user, 'datosss');
-    if (user.length === 1) {
-        const result = await getDatoCatalogo(pCodigo);
-        return result;
-    }
-
-    return { message: 'Error al obtener el catalogo' };
+async function obtenerDatoCatalogo(pCodigo) {
+    const result = await getDatoCatalogo(pCodigo);
+    return result;
 }
 
-async function insertarCatalogo(pUsuario, pPassword, catalogo) {
-    const user = await getUsuario(pUsuario, pPassword);
+async function insertarCatalogo(catalogo) {
     console.log('Servicio ', catalogo);
-    if (user.length === 1) {
-        const result = await insertCatalogo(catalogo);
-        return result;
-    }
-
-    return { message: 'Error al ingresar el catalogo' };
+    const result = await insertCatalogo(catalogo);
+    return result;
 }
 
-async function insertarDatoCatalogo(pUsuario, pPassword, pDato) {
-    const user = await getUsuario(pUsuario, pPassword);
+async function insertarDatoCatalogo(pDato) {
     console.log('Servicio ', pDato);
-    if (user.length === 1) {
-        const result = await insertDatoCatalogo(pDato);
-        return { status: 'ok' };
-    }
-
-    return { message: 'Error al ingresar el dato' };
+    const result = await insertDatoCatalogo(pDato);
+    return { status: 'ok' };
 }
 
-function getLogin(req) {
+async function obtenerUsuariosPorPunto(pPunto) {
+    const usuarios = await getUsuariosByPuntoAtencion(pPunto);
+    return usuarios;
+}
+
+async function actualizarPunto(punto) {
+    const result = await updatePuntoAtencion(punto);
+    console.log('Actualizacion ', result);
+    return result;
+}
+
+async function getLogin(req) {
     let headers = req.headers;
     // console.log('Headers: ', headers);
     if (headers.authorization) {
@@ -65,12 +57,16 @@ function getLogin(req) {
         auth = auth.split(':');
         let login = { user: auth[0], password: auth[1]};
         if (login.user == '' || login.password == ''){
-            //auten = false;
-           // console.log(auten);
             return {auth: false};
         }
         else{
-            return { user: auth[0], password: auth[1], auth: true};
+            const user = await getUsuario(login.user, login.password);
+            if (user.length === 1) {
+                return { auth: true }
+            }
+            else {
+                return {auth: false};
+            }
         }
     }
 
@@ -83,5 +79,7 @@ module.exports = {
     obtenerDatoCatalogo,
     insertarDatoCatalogo,
     obtenerPuntosAtencion,
+    obtenerUsuariosPorPunto,
+    actualizarPunto,
     getLogin
 }

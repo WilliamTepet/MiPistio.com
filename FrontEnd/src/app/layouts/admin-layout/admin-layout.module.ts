@@ -17,6 +17,11 @@ import {MatRippleModule} from '@angular/material/core';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatSelectModule} from '@angular/material/select';
+import {MatTableModule} from '@angular/material/table';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatPaginatorModule, MatPaginatorIntl } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { MatPaginatorIntlCro } from 'app/modelos/customClass';
 
 @NgModule({
   imports: [
@@ -30,6 +35,10 @@ import {MatSelectModule} from '@angular/material/select';
     MatInputModule,
     MatSelectModule,
     MatTooltipModule,
+    MatTableModule,
+    MatSliderModule,
+    MatPaginatorModule,
+    MatSortModule
   ],
   declarations: [
     DashboardComponent,
@@ -40,7 +49,8 @@ import {MatSelectModule} from '@angular/material/select';
     MapsComponent,
     NotificationsComponent,
     UpgradeComponent,
-  ]
+  ],
+  providers: [{ provide: MatPaginatorIntl, useClass: MatPaginatorIntlCro }]
 })
 
 export class AdminLayoutModule {}

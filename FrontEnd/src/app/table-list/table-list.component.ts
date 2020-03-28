@@ -1,9 +1,11 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import Swal from 'sweetalert2'
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { PuntoAtencion } from '../modelos/PuntoAtencionModelo';
 
-import * as $ from 'jquery';
 import * as moment from 'moment';
 import 'datatables.net';
 import 'datatables.net-bs4';
@@ -13,6 +15,7 @@ declare interface REGION {
   id: number;
   nombre: string;
 }
+
 
 declare interface ESTADO {
   id: number;
@@ -32,21 +35,19 @@ declare interface DATO {
   ipModifica: string;
 }
 
+export interface PeriodicElement {
+  name: string;
+  position: number;
+  weight: number;
+  symbol: string;
+}
+
 @Component({
   selector: 'app-table-list',
   templateUrl: './table-list.component.html',
   styleUrls: ['./table-list.component.css']
 })
 export class TableListComponent implements OnInit {
-
-  // @ViewChild('dataTable', {static: true}) table: ElementRef;
-  dataTable: any;
-  punto: any = {
-    nombre: '',
-    region: '',
-    estado: ''
-  };
-  puntoUpdate: PuntoAtencion;
 
   constructor(private servicio: ServicioService) { 
     this.puntoAtencionForm = new FormGroup({
@@ -55,17 +56,32 @@ export class TableListComponent implements OnInit {
     });
 
     this.puntoAtencionActualizacionForm = new FormGroup({
-      regionPunto: new FormControl({value: '', disabled: true}, Validators.required),
       nombrePuntoAtencion: new FormControl({ value: '' }, Validators.required),
       estadoPunto: new FormControl({ value: '' }, Validators.required)
     });
   }
 
-  puntosAtencion: any[] = [
-    
-  ];
+  displayedColumns: string[] = ['id', 'region', 'nombre', 'estado', 'acciones'];
+  dataSource: MatTableDataSource<any> = new MatTableDataSource;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  
+  punto: any = {
+    nombre: '',
+    region: '',
+    estado: ''
+  };
 
-  regiones: any = [];
+  puntoUpdate: PuntoAtencion;
+
+  puntosAtencion: any[] = [];
+
+  regiones: any = [
+    { codigo: 1, nombre: 'Central' },
+    { codigo: 2, nombre: 'Sur' },
+    { codigo: 3, nombre: 'Occidente' },
+    { codigo: 4, nombre: 'Nororiente' }
+  ];
 
   estados: ESTADO[] = [
     { id: 1, nombre: 'activo' },
@@ -79,15 +95,25 @@ export class TableListComponent implements OnInit {
   catalogos: any = [];
 
   async ngOnInit() {
-    // $.noConflict();
-    this.regiones = await this.getDatos(1);
+
+    this.puntosAtencion = [];
+
+    /* this.regiones = await this.getDatos(1);
+    console.log('Regiones ', this.regiones); */
     this.servicio.getIp()
       .subscribe(res => {
         this.ip = res.ip;
       }, err => console.log('Hubo un error al obtener la ip ', err));
     
     await this.servicio.getPuntos().toPromise().then(res => {
-      this.puntosAtencion = res;
+      res.forEach(element => {
+        let punto = { id: element.id_punto_atencion, nombre: element.nombre, region: element.region, estado: element.estado };
+        this.puntosAtencion.push(punto);
+      });
+      console.log('Puntos de atencion ', this.puntosAtencion);
+      this.dataSource = new MatTableDataSource(this.puntosAtencion);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
     }).catch(e => console.log('Ocurrio un error ', e))
 
   }
@@ -139,7 +165,6 @@ export class TableListComponent implements OnInit {
     console.log('Dato ', dato)
   }
   public getRegion(codigo: any): string {
-    // console.log('codigos de regiones ', codigo);
     // console.log(this.regiones.find(e => e.codigo === codigo));
     let nombre = this.regiones.find(e => e.codigo === codigo).nombre
     return nombre;
@@ -150,17 +175,53 @@ export class TableListComponent implements OnInit {
     return estado;
   }
 
-  public editar(punto: PuntoAtencion): void {
+  public editar(punto: any, i: number): void {
     console.log(punto);
-    this.puntoAtencionActualizacionForm.setValue(
-      { regionPunto: punto.region, nombrePuntoAtencion: punto.nombre, estadoPunto: punto.estado }
-    );
+    this.puntoAtencionActualizacionForm.get('nombrePuntoAtencion').setValue(punto.nombre);
     this.punto = punto;
+    this.punto.index = i;
     console.log(this.puntoAtencionActualizacionForm.value);
+    console.log(this.punto);
   }
 
   public actualizarPunto() {
+    console.log('Punto ', this.puntoAtencionActualizacionForm.value);
     console.log('Actualizar!');
+    let dato = {
+      id: this.punto.id,
+      nombre: this.puntoAtencionActualizacionForm.get('nombrePuntoAtencion').value,
+      estado: this.puntoAtencionActualizacionForm.get('estadoPunto').value,
+      usuarioModifica: sessionStorage.getItem('username'),
+      fechaModifica: moment().format('YYYY-MM-DD hh:mm:ss A Z'),
+      ipModifica: this.ip
+    }
+    console.log(dato);
+
+    this.servicio.updatePunto(dato)
+      .subscribe(res => {
+        if(res.status === 1) {
+          this.puntosAtencion[this.punto.index].nombre = dato.nombre;
+          this.puntosAtencion[this.punto.index].estado = dato.estado;
+          Swal.fire('Datos actualizados');
+        } else if (res.status === 2) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error al actualizar!',
+            text: res.message
+          })
+        }
+      }, e => console.log('Ocurrio un error ', e))
   }
+
+  public applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+  
 
 }
