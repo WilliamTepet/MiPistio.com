@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { obtenerUsuarios, insertarUsuarios, verificarUsuario, actualizarUsuarios, verificarRolUsuario, agregarPtoUsuario } = require('../servicios/UsuarioServicio');
+const { obtenerUsuarios, insertarUsuarios, verificarCargoUsuario, verificarUsuario, actualizarUsuarios, verificarRolUsuario, agregarPtoUsuario, verificarCatUsuario } = require('../servicios/UsuarioServicio');
 const { getLogin } = require('../servicios/CatalogosServicio');
 
 
@@ -22,28 +22,38 @@ router.post('/agregar', async (req, res)=>{
     if (login.auth) {
         const usuario =  await verificarUsuario(datos.cui, datos.email);
         const rol = await verificarRolUsuario(login.user, login.password);
-        //console.log ('rol jefe en en controlador', usuario.cargoJefe, usuario.usuarioExiste);
+        console.log ('validar codigo', datos.codigo, usuario.usuarioExiste, usuario.cargoJefe, usuario.cont);
         userExiste = false;
-        if (((usuario.usuarioExiste && !usuario.cargoJefe) && (datos.cod_cargo != 11)) || 
+        /*if (((usuario.usuarioExiste && !usuario.cargoJefe) && (datos.cod_cargo != 11)) || 
             ((usuario.usuarioExiste && usuario.cargoJefe) && (datos.cod_cargo != 11 && usuario.cont >=1))
             ){
             userExiste = true;
             //console.log('validando si rol jefe no existe', usuarioExiste);
+        }*/
+        if (usuario.usuarioExiste){
+            const cargo = await verificarCargoUsuario (datos.cui);
+            if (cargo.cargoNoJefe && datos.cod_cargo != 11){
+                userExiste = true;
+            }
         }
-        console.log('usuarioooooooo', userExiste);
+        console.log('usuarioo', userExiste, rol.rolAdmin, usuario.codPtoActual);
         if (!userExiste && rol.rolAdmin){
-            if (datos.cod_cargo == 11 &&(datos.codigo != usuario.codPtoActual )){
+            const usuarioCat = await verificarCatUsuario (datos.cui, datos.codigo);
+            console.log ('catalogo usuario ', usuarioCat.userCatalogo);
+            if (/*(datos.cod_cargo == 11 && */usuario.codPtoActual >=1 && !usuarioCat.userCatalogo){
+            /*(datos.codigo != usuario.codPtoActual)){*/
                 let agregarPtoAten = await agregarPtoUsuario(usuario.idUser, datos);
                 res.json({message: 'Se guardaron correctamente los datos del usuario para el punto de atención'});
             }
-            else
-                if (datos.cod_cargo == 11 &&(datos.codigo == usuario.codPtoActual )){
-                res.json({message: 'El usuario ya tiene asignado el rol para este punto'});
-            }
+            else{
+                if (usuario.codPtoActual >=1 && usuarioCat.userCatalogo)/*(datos.cod_cargo == 11 && (datos.codigo == usuario.codPtoActual ))*/{
+                res.json({message: 'El usuario ya existe en este punto'});
+                }
                 else{
                     let postUser = await insertarUsuarios(datos);
                     res.json({message: 'Se guardaron correctamente los datos del usuario para el punto de atención'});
                 }
+            }
         }
         else{
             if(userExiste){
@@ -76,10 +86,12 @@ router.put('/actualizar/:id', async (req, res)=>{
         else {
             if((usuario.usuarioExiste && rol.rolAdmin) && (usuarioId == usuario.idUser)){
                 let updateUser = await actualizarUsuarios(usuarioId, datos)
-                res.json({message: 'Datos actualizados'});
+                res.json({message: 'Datos actualizados 2'});
             }
-            else{// (usuario.usuarioExiste && (usuarioId != usuario.idUser)){
+            else{ 
+                if(usuario.usuarioExiste && (usuarioId != usuario.idUser)){
                 res.json({ message: 'Error al guardar los datos, el CUI o Email ya existen'});
+                }
             }
         }
     }

@@ -62,7 +62,7 @@ const updateUsuario = async (pId, pUsuario) => {
         '${usuario.fecha_modifica}', ip_modifica = '${usuario.ip_modifica}', password = '${usuario.password}'
         where id_usuario = '${pId}';
         update mipistio_catalogo.cat_usuario_punto_atencion set cod_cargo = ${usuario.cod_cargo}
-        where cod_usuario = '${pId}';`);
+        where cod_usuario = '${pId}' and cod_punto_atencion = '${usuario.codigo}';`);
 
 
 
@@ -91,5 +91,39 @@ const addPtoUsuario = async (pId, pUsuario) => {
     
 }
 
+const getUserExistente = async (pCui, pCatalogo) => {
+    console.log('Verificando si usuario ya existe en catalogo...', pCatalogo);
+    try {
+        const result = await pool.query(`select CU.id_usuario, PA.nombre
+        from mipistio_catalogo.cat_punto_atencion PA
+        join mipistio_catalogo.cat_usuario_punto_atencion CPA on CPA.cod_punto_atencion = PA.id_punto_atencion
+        join mipistio_catalogo.cat_usuarios CU on CU.id_usuario = CPA.cod_usuario
+        where cui = '${pCui}' and CPA.cod_punto_atencion = '${pCatalogo}';`);
 
-module.exports = { getUsuarios, insertUsuarios, getCuiEmailUsuario, updateUsuario, addPtoUsuario };
+        return result.rows;
+    } catch (e) {
+        console.log(e);
+        console.error('Usuairo no encontrado en la DB',e);
+    }
+    
+}
+
+const getCargoJefe = async (pCui) => {
+    console.log('Verificando si usuario tiene cargo no jefe...', pCui);
+    try {
+        const result = await pool.query(`select CU.id_usuario, PA.nombre
+        from mipistio_catalogo.cat_punto_atencion PA
+        join mipistio_catalogo.cat_usuario_punto_atencion CPA on CPA.cod_punto_atencion = PA.id_punto_atencion
+        join mipistio_catalogo.cat_usuarios CU on CU.id_usuario = CPA.cod_usuario
+        where cui = '${pCui}' and CPA.cod_cargo < 11;`);
+
+        return result.rows;
+    } catch (e) {
+        console.log(e);
+        console.error('Usuario no encontrado en la DB',e);
+    }
+    
+}
+
+
+module.exports = { getUsuarios, insertUsuarios, getCuiEmailUsuario, updateUsuario, addPtoUsuario, getUserExistente, getCargoJefe };
