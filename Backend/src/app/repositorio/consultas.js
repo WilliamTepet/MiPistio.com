@@ -44,12 +44,14 @@ const getPuntoAtencion = async () => {
     
 }
 
-const updatePuntoAtencion = async (punto, estado) => {
+const updatePuntoAtencion = async (punto) => {
     try {
         await pool.query(`UPDATE mipistio_catalogo.cat_punto_atencion 
-                                        SET estado = ${estado} 
-                                        WHERE id_punto_atencion = ${punto}`);
-        return { message: 'punto actualizado' };
+                                        SET estado = ${punto.estado}, nombre = '${punto.nombre}',
+                                        usuario_modifica = '${punto.usuarioModifica}', fecha_modifica = '${punto.fechaModifica}',
+                                        ip_modifica = '${punto.ipModifica}'
+                                        WHERE id_punto_atencion = ${punto.id}`);
+        return { status:1, message: 'punto actualizado' };
     } catch (e) {
         console.log(e)
         return [];

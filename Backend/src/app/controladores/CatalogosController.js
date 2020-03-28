@@ -95,16 +95,17 @@ router.get('/usuarios-por-punto', async (req, res) => {
 
 router.put('/actualizar-punto-atencion', async (req, res) => {
     let login = await getLogin(req);
-    let params = req.body;
+    let punto = req.body;
     let status, resultado;
     if (login.auth) {
-        usuarios = await obtenerUsuariosPorPunto(params.punto);
+        usuarios = await obtenerUsuariosPorPunto(punto.id);
         if (usuarios.puntos == 0) {
-            resultado = actualizarPunto(params.punto, params.estado);
+            resultado = await actualizarPunto(punto);
+            console.log('Punto actualizado ', resultado)
             status = 200;
         } else if (usuarios.puntos > 0) {
-            status = 500;
-            resultado = { message: 'Existen usuarios activos' };
+            status = 200;
+            resultado = { status: 2, message: `Existen ${usuarios.puntos} usuarios activos` };
         }
     } else {
         status = 401;

@@ -54,5 +54,10 @@ export class ServicioService {
       .map(res => res);
   }
 
+  public updatePunto(punto): Observable<any> {
+    return this.http.put<any>(`${this.URL_CATALOGOS}/actualizar-punto-atencion`, punto, this.httpOptions)
+      .map(res => res);
+  }
+
 
 }

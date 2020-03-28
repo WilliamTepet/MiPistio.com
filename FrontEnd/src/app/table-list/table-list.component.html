@@ -87,14 +87,14 @@
                             <!-- acciones Column -->
                             <ng-container matColumnDef="acciones">
                                 <th mat-header-cell *matHeaderCellDef> Acciones </th>
-                                <td mat-cell *matCellDef="let element"> 
+                                <td mat-cell *matCellDef="let element; let i = index"> 
                                     <button data-toggle="modal" data-target="#formActualizacion"
-                                    (click)="editar(punto)" class="btn btn-primary">Modificar</button> 
+                                    (click)="editar(element, i)" class="btn btn-primary">Modificar</button> 
                                 </td>
                               </ng-container>
                           
                             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
                           </table>
                           <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
                       </div>
@@ -142,7 +142,7 @@
         </div>
       </div>
       <div class="row">
-        <!-- Formulario para agregar punto de atención -->
+        <!-- Formulario para actualizar punto de atención -->
       <div class="modal fade" id="formActualizacion" tabindex="-1" role="dialog" aria-labelledby="formActualizacion" aria-hidden="true">
           <div class="modal-dialog" role="document">
           <div class="modal-content">
@@ -153,26 +153,17 @@
               </button>
               </div>
               <div class="modal-body">
-                  <form #actFormPunto="ngForm">
+                  <form [formGroup]="puntoAtencionActualizacionForm">
                       <div class="form-group">
-                        <mat-form-field class="">
-                            <mat-select required [disabled]="true" name="region" #region="ngModel" [(ngModel)]="punto.region">
-                                <mat-option *ngFor="let region of regiones" [value]="punto.region">
-                                    {{ region.nombre }}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                      </div>
-                      <div class="form-group">
-                          <mat-form-field class="">
-                              <input required name="nombre" #nombre="ngModel" matInput [(ngModel)]="punto.nombre">
+                          <mat-form-field>
+                              <input required matInput formControlName="nombrePuntoAtencion">
                           </mat-form-field>
                       </div>
                       <div class="form-group">
                         <mat-form-field>
                             <mat-label>Estado</mat-label>
-                            <mat-select required name="estado" #estado="ngModel" [(ngModel)]="punto.estado">
-                                <mat-option *ngFor="let estado of estados" [value]="punto.estado">
+                            <mat-select required formControlName="estadoPunto">
+                                <mat-option *ngFor="let estado of estados" [value]="estado.id">
                                     {{ estado.nombre }}
                                 </mat-option>
                             </mat-select>
@@ -182,7 +173,7 @@
               </div>
               <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">CERRAR</button>
-              <button (click)="actualizarPunto()" data-dismiss="modal" [disabled]="!actFormPunto.valid" class="btn btn-primary">ACTUALIZAR PUNTO DE ATENCIÓN</button>
+              <button (click)="actualizarPunto()" data-dismiss="modal" [disabled]="!puntoAtencionActualizacionForm.valid" class="btn btn-primary">ACTUALIZAR PUNTO DE ATENCIÓN</button>
               </div>
           </div>
           </div>

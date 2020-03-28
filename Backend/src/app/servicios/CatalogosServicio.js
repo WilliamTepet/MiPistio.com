@@ -43,8 +43,9 @@ async function obtenerUsuariosPorPunto(pPunto) {
     return usuarios;
 }
 
-async function actualizarPunto(punto, estado) {
-    const result = await updatePuntoAtencion(punto, estado);
+async function actualizarPunto(punto) {
+    const result = await updatePuntoAtencion(punto);
+    console.log('Actualizacion ', result);
     return result;
 }
 

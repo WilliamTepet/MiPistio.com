@@ -56,7 +56,6 @@ export class TableListComponent implements OnInit {
     });
 
     this.puntoAtencionActualizacionForm = new FormGroup({
-      regionPunto: new FormControl({value: '', disabled: true}, Validators.required),
       nombrePuntoAtencion: new FormControl({ value: '' }, Validators.required),
       estadoPunto: new FormControl({ value: '' }, Validators.required)
     });
@@ -74,11 +73,15 @@ export class TableListComponent implements OnInit {
   };
 
   puntoUpdate: PuntoAtencion;
-  
 
   puntosAtencion: any[] = [];
 
-  regiones: any = [];
+  regiones: any = [
+    { codigo: 1, nombre: 'Central' },
+    { codigo: 2, nombre: 'Sur' },
+    { codigo: 3, nombre: 'Occidente' },
+    { codigo: 4, nombre: 'Nororiente' }
+  ];
 
   estados: ESTADO[] = [
     { id: 1, nombre: 'activo' },
@@ -95,7 +98,8 @@ export class TableListComponent implements OnInit {
 
     this.puntosAtencion = [];
 
-    this.regiones = await this.getDatos(1);
+    /* this.regiones = await this.getDatos(1);
+    console.log('Regiones ', this.regiones); */
     this.servicio.getIp()
       .subscribe(res => {
         this.ip = res.ip;
@@ -161,7 +165,6 @@ export class TableListComponent implements OnInit {
     console.log('Dato ', dato)
   }
   public getRegion(codigo: any): string {
-    // console.log('codigos de regiones ', codigo);
     // console.log(this.regiones.find(e => e.codigo === codigo));
     let nombre = this.regiones.find(e => e.codigo === codigo).nombre
     return nombre;
@@ -172,17 +175,42 @@ export class TableListComponent implements OnInit {
     return estado;
   }
 
-  public editar(punto: PuntoAtencion): void {
+  public editar(punto: any, i: number): void {
     console.log(punto);
-    this.puntoAtencionActualizacionForm.setValue(
-      { regionPunto: punto.region, nombrePuntoAtencion: punto.nombre, estadoPunto: punto.estado }
-    );
+    this.puntoAtencionActualizacionForm.get('nombrePuntoAtencion').setValue(punto.nombre);
     this.punto = punto;
+    this.punto.index = i;
     console.log(this.puntoAtencionActualizacionForm.value);
+    console.log(this.punto);
   }
 
   public actualizarPunto() {
+    console.log('Punto ', this.puntoAtencionActualizacionForm.value);
     console.log('Actualizar!');
+    let dato = {
+      id: this.punto.id,
+      nombre: this.puntoAtencionActualizacionForm.get('nombrePuntoAtencion').value,
+      estado: this.puntoAtencionActualizacionForm.get('estadoPunto').value,
+      usuarioModifica: sessionStorage.getItem('username'),
+      fechaModifica: moment().format('YYYY-MM-DD hh:mm:ss A Z'),
+      ipModifica: this.ip
+    }
+    console.log(dato);
+
+    this.servicio.updatePunto(dato)
+      .subscribe(res => {
+        if(res.status === 1) {
+          this.puntosAtencion[this.punto.index].nombre = dato.nombre;
+          this.puntosAtencion[this.punto.index].estado = dato.estado;
+          Swal.fire('Datos actualizados');
+        } else if (res.status === 2) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error al actualizar!',
+            text: res.message
+          })
+        }
+      }, e => console.log('Ocurrio un error ', e))
   }
 
   public applyFilter(event: Event) {
