@@ -15,7 +15,7 @@ const getUsuarios = async () => {
 
 const getCuiEmailUsuario = async (pCui, pEmail) => {
     try {
-        const result = await pool.query(`select PA.nombre, CU.id_usuario, CPA.cod_cargo, CPA.cod_punto_atencion
+        const result = await pool.query(`select PA.nombre, CU.id_usuario, CPA.cod_cargo, CPA.cod_punto_atencion, CU.email, CU.cui
         from mipistio_catalogo.cat_punto_atencion 
         PA join mipistio_catalogo.cat_usuario_punto_atencion CPA on CPA.cod_punto_atencion = PA.id_punto_atencion 
         join mipistio_catalogo.cat_usuarios CU on CU.id_usuario = CPA.cod_usuario 
@@ -125,5 +125,20 @@ const getCargoJefe = async (pCui) => {
     
 }
 
+const getIdUser = async (pId) => {
+    console.log('Veficando ID de Usuario...', pId);
+    try {
+        const result = await pool.query(`select nombre, cui 
+        from mipistio_catalogo.cat_usuarios
+        where id_usuario = ${pId};`);
 
-module.exports = { getUsuarios, insertUsuarios, getCuiEmailUsuario, updateUsuario, addPtoUsuario, getUserExistente, getCargoJefe };
+        return result.rows;
+    } catch (e) {
+        console.log(e);
+        console.error('Usuario no encontrado en la DB',e);
+    }
+    
+}
+
+
+module.exports = { getUsuarios, insertUsuarios, getCuiEmailUsuario, updateUsuario, addPtoUsuario, getUserExistente, getCargoJefe, getIdUser };

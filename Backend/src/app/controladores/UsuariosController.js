@@ -1,5 +1,6 @@
 const router = require('express').Router();
-const { obtenerUsuarios, insertarUsuarios, verificarCargoUsuario, verificarUsuario, actualizarUsuarios, verificarRolUsuario, agregarPtoUsuario, verificarCatUsuario } = require('../servicios/UsuarioServicio');
+const { obtenerUsuarios,  insertarUsuarios, verificarCargoUsuario, verificarUsuario, actualizarUsuarios, 
+    verificarRolUsuario, agregarPtoUsuario, verificarCatUsuario, verificarIdUsuario } = require('../servicios/UsuarioServicio');
 const { getLogin } = require('../servicios/CatalogosServicio');
 
 
@@ -22,7 +23,7 @@ router.post('/agregar', async (req, res)=>{
     if (login.auth) {
         const usuario =  await verificarUsuario(datos.cui, datos.email);
         const rol = await verificarRolUsuario(login.user, login.password);
-        console.log ('validar codigo', datos.codigo, usuario.usuarioExiste, usuario.cargoJefe, usuario.cont);
+        console.log ('validar codigo', datos.codigo, usuario.usuarioExiste, usuario.cargoJefe);
         userExiste = false;
         /*if (((usuario.usuarioExiste && !usuario.cargoJefe) && (datos.cod_cargo != 11)) || 
             ((usuario.usuarioExiste && usuario.cargoJefe) && (datos.cod_cargo != 11 && usuario.cont >=1))
@@ -40,25 +41,33 @@ router.post('/agregar', async (req, res)=>{
         if (!userExiste && rol.rolAdmin){
             const usuarioCat = await verificarCatUsuario (datos.cui, datos.codigo);
             console.log ('catalogo usuario ', usuarioCat.userCatalogo);
-            if (/*(datos.cod_cargo == 11 && */usuario.codPtoActual >=1 && !usuarioCat.userCatalogo){
+            if (/*(datos.cod_cargo == 11 && */(usuario.codPtoActual >=1 && !usuarioCat.userCatalogo)
+                && (usuario.email == datos.email) && (usuario.cui == datos.cui)){
             /*(datos.codigo != usuario.codPtoActual)){*/
                 let agregarPtoAten = await agregarPtoUsuario(usuario.idUser, datos);
-                res.json({message: 'Se guardaron correctamente los datos del usuario para el punto de atención'});
+                res.json({message: 'Se guardaron correctamente los datos del usuario para el punto de atención 2'});
             }
             else{
-                if (usuario.codPtoActual >=1 && usuarioCat.userCatalogo)/*(datos.cod_cargo == 11 && (datos.codigo == usuario.codPtoActual ))*/{
+                if ((usuario.codPtoActual >=1 && usuarioCat.userCatalogo) && 
+                    (usuario.email == datos.email) && (usuario.cui == datos.cui))/*(datos.cod_cargo == 11 && (datos.codigo == usuario.codPtoActual ))*/{
                 res.json({message: 'El usuario ya existe en este punto'});
                 }
-                else{
-                    let postUser = await insertarUsuarios(datos);
-                    res.json({message: 'Se guardaron correctamente los datos del usuario para el punto de atención'});
+                else {
+                    if((usuario.codPtoActual >=1 && usuarioCat.userCatalogo) &&
+                        ((usuario.email != datos.email) || (usuario.cui != datos.cui))){
+                        res.json({message: 'Error, verifique la información del usuario'});
+                    }
+                    else{
+                        let postUser = await insertarUsuarios(datos);
+                        res.json({message: 'Se guardaron correctamente los datos del usuario para el punto de atención'});
+                    }
                 }
             }
         }
         else{
             if(userExiste){
                 ptoAtencion = usuario.ptoAtencion;
-                res.json({ message: 'Error el usuario ya existe en el punto de atención', ptoAtencion}); 
+                res.json({ message: 'Error al guardar el usuario'}); 
             }
             else {
                 res.json({ message: 'Error privilegios insuficientes'}); 
@@ -79,7 +88,8 @@ router.put('/actualizar/:id', async (req, res)=>{
         const usuario =  await verificarUsuario(datos.cui, datos.email);
         const rol = await verificarRolUsuario(login.user, login.password);
         //console.log ('rol admin en controlador', rol.rolAdmin);
-        if (!usuario.usuarioExiste && rol.rolAdmin){
+        const id = await verificarIdUsuario(usuarioId)
+        if (!usuario.usuarioExiste && rol.rolAdmin && id.userId) {
             let updateUser = await actualizarUsuarios(usuarioId, datos);
             res.json({message: 'Datos actualizados'});
             } 
@@ -90,7 +100,10 @@ router.put('/actualizar/:id', async (req, res)=>{
             }
             else{ 
                 if(usuario.usuarioExiste && (usuarioId != usuario.idUser)){
-                res.json({ message: 'Error al guardar los datos, el CUI o Email ya existen'});
+                    res.json({ message: 'Error, verifique la informacion del usuario'});
+                }
+                else{
+                    res.json({ message: 'Error, verifique la informacion del usuario'});
                 }
             }
         }

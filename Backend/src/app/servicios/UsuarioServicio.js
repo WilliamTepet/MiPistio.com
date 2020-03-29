@@ -1,5 +1,5 @@
 const { getUsuario } = require('../repositorio/consultas');
-const { getUsuarios, insertUsuarios, getCuiEmailUsuario, updateUsuario, getCargoJefe, addPtoUsuario, getUserExistente} = require('../repositorio/ConsultasUsuarios');
+const { getUsuarios, insertUsuarios, getCuiEmailUsuario, updateUsuario, getIdUser, getCargoJefe, addPtoUsuario, getUserExistente} = require('../repositorio/ConsultasUsuarios');
 
 //verifica password y usuario correcto para login
 async function verificarAuthUsuario(pUsuario, pPassword) {
@@ -38,6 +38,8 @@ async function verificarUsuario(pCui, pEmail) {
         usuarioExiste=true;
         ptoAtencion = user[0].nombre;
         idUser = user[0].id_usuario;
+        email = user[0].email;
+        cui = user[0].cui;
         //console.log(ptoAtencion);
         for (i = 0; i<user.length; i++){
             rolActual = user[i].cod_cargo;
@@ -54,13 +56,14 @@ async function verificarUsuario(pCui, pEmail) {
             }
             
         }
-        return {usuarioExiste,idUser,ptoAtencion, cargoJefe, codPtoActual, message:'CUI o Email Duplicados... ',};    
+        return {usuarioExiste,idUser,cui,ptoAtencion,email,cargoJefe, codPtoActual, message:'CUI o Email Duplicados... ',};    
     }
     usuarioExiste = false;
     catCodigo = false;
     codPtoActual = 0;
     return {usuarioExiste, codPtoActual, message: 'CUI o Email no existe' };
 }
+
 
 async function verificarCatUsuario (pCui, pCatalogo) {
     const cat = await getUserExistente(pCui, pCatalogo);
@@ -75,6 +78,7 @@ async function verificarCatUsuario (pCui, pCatalogo) {
     return {userCatalogo};
 }
 
+
 async function verificarCargoUsuario (pCui) {
     const cargo = await getCargoJefe(pCui);
     //console.log('filas de DB para usuario', cat);
@@ -87,6 +91,21 @@ async function verificarCargoUsuario (pCui) {
 
     return {cargoNoJefe};
 }
+
+
+async function verificarIdUsuario (pId) {
+    const id = await getIdUser(pId);
+    //console.log('filas de DB para usuario', cat);
+    if (id.length >= 1) {
+        userId = true;
+    }
+    else{
+        userId = false;
+    }
+
+    return {userId};
+}
+
 
 async function obtenerUsuarios(){
     const result = await getUsuarios();
@@ -118,4 +137,6 @@ async function agregarPtoUsuario(id, usuario) {
 };
 
 
-module.exports = { verificarAuthUsuario, verificarRolUsuario, obtenerUsuarios, insertarUsuarios, verificarUsuario, actualizarUsuarios,agregarPtoUsuario, verificarCatUsuario, verificarCargoUsuario };
+module.exports = { verificarAuthUsuario, verificarRolUsuario, obtenerUsuarios, 
+                    insertarUsuarios, verificarUsuario, actualizarUsuarios,agregarPtoUsuario, 
+                    verificarCatUsuario, verificarCargoUsuario, verificarIdUsuario };
