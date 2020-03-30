@@ -3,7 +3,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import Swal from 'sweetalert2'
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators, NgForm } from '@angular/forms';
 import { PuntoAtencion } from '../modelos/PuntoAtencionModelo';
 
 import * as moment from 'moment';
@@ -178,6 +178,7 @@ export class TableListComponent implements OnInit {
   public editar(punto: any, i: number): void {
     console.log(punto);
     this.puntoAtencionActualizacionForm.get('nombrePuntoAtencion').setValue(punto.nombre);
+    this.puntoAtencionActualizacionForm.get('estadoPunto').setValue(punto.estado);
     this.punto = punto;
     this.punto.index = i;
     console.log(this.puntoAtencionActualizacionForm.value);
@@ -187,6 +188,8 @@ export class TableListComponent implements OnInit {
   public actualizarPunto() {
     console.log('Punto ', this.puntoAtencionActualizacionForm.value);
     console.log('Actualizar!');
+    let enviando = Swal
+    enviando.fire('Enviando...');
     let dato = {
       id: this.punto.id,
       nombre: this.puntoAtencionActualizacionForm.get('nombrePuntoAtencion').value,
@@ -200,6 +203,7 @@ export class TableListComponent implements OnInit {
     this.servicio.updatePunto(dato)
       .subscribe(res => {
         if(res.status === 1) {
+          enviando.close();
           this.puntosAtencion[this.punto.index].nombre = dato.nombre;
           this.puntosAtencion[this.punto.index].estado = dato.estado;
           Swal.fire('Datos actualizados');
@@ -210,7 +214,15 @@ export class TableListComponent implements OnInit {
             text: res.message
           })
         }
-      }, e => console.log('Ocurrio un error ', e))
+      }, e => {
+        enviando.close();
+        Swal.fire({
+          icon: 'error',
+          title: 'Error en el servidor!',
+          text: 'No se pudo enviar la información'
+        })
+        console.log('Ocurrio un error ', e);
+      })
   }
 
   public applyFilter(event: Event) {
