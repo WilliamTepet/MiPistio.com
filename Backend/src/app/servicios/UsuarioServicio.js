@@ -1,5 +1,7 @@
 const { getUsuario } = require('../repositorio/consultas');
-const { getUsuarios, insertUsuarios, getCuiEmailUsuario, updateUsuario, getIdUser, getCargoJefe, addPtoUsuario, getUserExistente} = require('../repositorio/ConsultasUsuarios');
+const { getUsuarios, insertUsuarios, getCuiEmailUsuario, updateUsuario, getIdCatUser, 
+        getCargoJefe, addPtoUsuario, getUserExistente, getCargoActual,
+        getCui, getEmail} = require('../repositorio/ConsultasUsuarios');
 
 //verifica password y usuario correcto para login
 async function verificarAuthUsuario(pUsuario, pPassword) {
@@ -32,7 +34,7 @@ async function verificarRolUsuario(pUsuario, pPassword) {
 //verifica si el cui o email ya existe en BDD
 async function verificarUsuario(pCui, pEmail) {
     const user = await getCuiEmailUsuario(pCui, pEmail);
-    console.log('filas de DB para usuario', user);
+    console.log('filas de DB para GetEmail', user);
     //console.log('id ', user[0].id_usuario);
     if (user.length >= 1) {
         usuarioExiste=true;
@@ -93,16 +95,55 @@ async function verificarCargoUsuario (pCui) {
 }
 
 
-async function verificarIdUsuario (pId) {
-    const id = await getIdUser(pId);
+async function verificarIdCatUsuario (pId, pCatalogo) {
+    const idCat = await getIdCatUser(pId, pCatalogo);
     //console.log('filas de DB para usuario', cat);
-    if (id.length >= 1) {
-        userId = true;
+    if (idCat.length >= 1) {
+        userIdCat = true;
     }
     else{
-        userId = false;
+        userIdCat = false;
     }
 
+    return {userIdCat};
+}
+
+async function verificarCargoUsuarioId (pId) {
+    const getCargo = await getCargoActual(pId);
+    //console.log('filas de DB para usuario', getCargo);
+    if (getCargo.length >= 1) {
+        cargoNoJefe = true;
+        codPtoAtencion = getCargo[0].cod_punto_atencion;
+    }
+    else{
+        cargoNoJefe = false;
+        codPtoAtencion = 0;
+    }
+    console.log ('codigo punto atencion no jefe', codPtoAtencion);
+    return {cargoNoJefe, codPtoAtencion};
+}
+
+async function verificarCui (pCui) {
+    const cui = await getCui(pCui);
+    //console.log('filas de DB para usuario', cui);
+    if (cui.length >= 1) {
+        userId = cui[0].id_usuario;
+    }
+    else{
+        userId= 0;
+    }
+    return {userId};
+}
+
+async function verificarEmail (pEmail) {
+    const email = await getEmail(pEmail);
+    //console.log('filas de DB para usuario', email);
+    if (email.length >= 1) {
+        userId = email[0].id_usuario;
+    }
+    else{
+        userId = 0;
+    }
     return {userId};
 }
 
@@ -139,4 +180,5 @@ async function agregarPtoUsuario(id, usuario) {
 
 module.exports = { verificarAuthUsuario, verificarRolUsuario, obtenerUsuarios, 
                     insertarUsuarios, verificarUsuario, actualizarUsuarios,agregarPtoUsuario, 
-                    verificarCatUsuario, verificarCargoUsuario, verificarIdUsuario };
+                    verificarCatUsuario, verificarCargoUsuario, verificarIdCatUsuario,
+                    verificarCargoUsuarioId, verificarEmail, verificarCui};

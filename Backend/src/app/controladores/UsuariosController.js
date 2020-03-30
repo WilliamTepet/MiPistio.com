@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const { obtenerUsuarios,  insertarUsuarios, verificarCargoUsuario, verificarUsuario, actualizarUsuarios, 
-    verificarRolUsuario, agregarPtoUsuario, verificarCatUsuario, verificarIdUsuario } = require('../servicios/UsuarioServicio');
+    verificarRolUsuario, agregarPtoUsuario, verificarCatUsuario, verificarIdCatUsuario, 
+    verificarCargoUsuarioId, verificarCui, verificarEmail } = require('../servicios/UsuarioServicio');
 const { getLogin } = require('../servicios/CatalogosServicio');
 
 
@@ -25,12 +26,6 @@ router.post('/agregar', async (req, res)=>{
         const rol = await verificarRolUsuario(login.user, login.password);
         console.log ('validar codigo', datos.codigo, usuario.usuarioExiste, usuario.cargoJefe);
         userExiste = false;
-        /*if (((usuario.usuarioExiste && !usuario.cargoJefe) && (datos.cod_cargo != 11)) || 
-            ((usuario.usuarioExiste && usuario.cargoJefe) && (datos.cod_cargo != 11 && usuario.cont >=1))
-            ){
-            userExiste = true;
-            //console.log('validando si rol jefe no existe', usuarioExiste);
-        }*/
         if (usuario.usuarioExiste){
             const cargo = await verificarCargoUsuario (datos.cui);
             if (cargo.cargoNoJefe && datos.cod_cargo != 11){
@@ -83,33 +78,73 @@ router.post('/agregar', async (req, res)=>{
 router.put('/actualizar/:id', async (req, res)=>{
     let login = await getLogin(req);
     let datos = req.body;
-    let usuarioId = req.params.id;  
-    if (login.auth) {
-        const usuario =  await verificarUsuario(datos.cui, datos.email);
-        const rol = await verificarRolUsuario(login.user, login.password);
-        //console.log ('rol admin en controlador', rol.rolAdmin);
-        const id = await verificarIdUsuario(usuarioId)
-        if (!usuario.usuarioExiste && rol.rolAdmin && id.userId) {
-            let updateUser = await actualizarUsuarios(usuarioId, datos);
-            res.json({message: 'Datos actualizados'});
-            } 
-        else {
-            if((usuario.usuarioExiste && rol.rolAdmin) && (usuarioId == usuario.idUser)){
-                let updateUser = await actualizarUsuarios(usuarioId, datos)
-                res.json({message: 'Datos actualizados 2'});
+    let usuarioId = req.params.id;
+    const rol = await verificarRolUsuario(login.user, login.password);
+    if (login.auth && rol.rolAdmin) {
+        const ptoAtencion = await verificarIdCatUsuario(usuarioId, datos.codigo);
+        if(ptoAtencion.userIdCat){
+            const cargo = await verificarCargoUsuarioId(usuarioId);
+            const cuiUsuario =  await verificarCui(datos.cui);
+            const emailUsuario = await verificarEmail(datos.email);
+            valCargo = false;
+            //validacion para condiciones de actualización de cargo
+            if (cargo.cargoNoJefe && datos.cod_cargo != 11 && (datos.codigo != cargo.codPtoAtencion)){
+                    valCargo = true;
             }
-            else{ 
-                if(usuario.usuarioExiste && (usuarioId != usuario.idUser)){
-                    res.json({ message: 'Error, verifique la informacion del usuario'});
+            console.log('actualizandoo', valCargo, cargoNoJefe, cuiUsuario.userId, emailUsuario.userId);
+            //validaciones email y cui
+            if (cuiUsuario.userId == usuarioId && emailUsuario.userId == usuarioId){
+                if (!valCargo){
+                    let updateUser = await actualizarUsuarios(usuarioId, datos);
+                    res.json({message: 'Datos actualizados'});
+                }
+                else {
+                    res.json({message: 'Error de validacion de cargo'});
+                }
+            } 
+            else {
+                if (cuiUsuario.userId == 0 && emailUsuario.userId == 0){
+                    if (!valCargo){
+                        let updateUser = await actualizarUsuarios(usuarioId, datos);
+                        res.json({message: 'Datos actualizados'});
+                    }
+                    else {
+                        res.json({message: 'Error de validacion de cargo'});
+                    }
                 }
                 else{
-                    res.json({ message: 'Error, verifique la informacion del usuario'});
+                    if (cuiUsuario.userId == 0 && emailUsuario.userId == usuarioId){
+                        if (!valCargo){
+                            let updateUser = await actualizarUsuarios(usuarioId, datos);
+                            res.json({message: 'Datos actualizados'});
+                        }
+                        else {
+                            res.json({message: 'Error de validacion de cargo'});
+                        }
+                    }
+                    else{
+                        if (cuiUsuario.userId == usuarioId && emailUsuario.userId == 0){
+                            if (!valCargo){
+                                let updateUser = await actualizarUsuarios(usuarioId, datos);
+                                res.json({message: 'Datos actualizados'});
+                            }
+                            else {
+                                res.json({message: 'Error de validacion de cargo'});
+                            }
+                        }
+                        else {
+                            res.json({ message: 'Error, verifique la informacion del usuario'});
+                        }
+                    }
                 }
             }
         }
+        else{
+            res.json({ message: 'Error, verifique la informacion del usuario'});
+        }
     }
-    else {
-        res.json ({message: 'Error, Usuario no Autenticado'});
+    else{
+        res.json ({message: 'Usuario no Autenticado o Priviliegios insuficientes'});
     }
     
 });

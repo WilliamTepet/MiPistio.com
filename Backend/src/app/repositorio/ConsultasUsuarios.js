@@ -40,7 +40,6 @@ const insertUsuarios = async (pUsuario) => {
             '${usuario.ip_modifica}','${usuario.password}');
             insert into mipistio_catalogo.cat_usuario_punto_atencion values (nextval('s_usuario_p_atencion'),
             (select currval ('s_id_usuario')),${usuario.codigo},${usuario.cod_cargo});`;
-
         console.log('Query ', query);
         const result = await pool.query(query);
         return result;
@@ -63,9 +62,6 @@ const updateUsuario = async (pId, pUsuario) => {
         where id_usuario = '${pId}';
         update mipistio_catalogo.cat_usuario_punto_atencion set cod_cargo = ${usuario.cod_cargo}
         where cod_usuario = '${pId}' and cod_punto_atencion = '${usuario.codigo}';`);
-
-
-
         return result.rows;
     } catch (e) {
         console.log(e);
@@ -82,7 +78,6 @@ const addPtoUsuario = async (pId, pUsuario) => {
         usuario = pUsuario;
         const result = await pool.query(`insert into mipistio_catalogo.cat_usuario_punto_atencion 
         values (nextval('s_usuario_p_atencion'),'${pId}','${usuario.codigo}','${usuario.cod_cargo}');`);
-
         return result.rows;
     } catch (e) {
         console.log(e);
@@ -99,7 +94,6 @@ const getUserExistente = async (pCui, pCatalogo) => {
         join mipistio_catalogo.cat_usuario_punto_atencion CPA on CPA.cod_punto_atencion = PA.id_punto_atencion
         join mipistio_catalogo.cat_usuarios CU on CU.id_usuario = CPA.cod_usuario
         where cui = '${pCui}' and CPA.cod_punto_atencion = '${pCatalogo}';`);
-
         return result.rows;
     } catch (e) {
         console.log(e);
@@ -116,7 +110,6 @@ const getCargoJefe = async (pCui) => {
         join mipistio_catalogo.cat_usuario_punto_atencion CPA on CPA.cod_punto_atencion = PA.id_punto_atencion
         join mipistio_catalogo.cat_usuarios CU on CU.id_usuario = CPA.cod_usuario
         where cui = '${pCui}' and CPA.cod_cargo < 11;`);
-
         return result.rows;
     } catch (e) {
         console.log(e);
@@ -125,13 +118,12 @@ const getCargoJefe = async (pCui) => {
     
 }
 
-const getIdUser = async (pId) => {
-    console.log('Veficando ID de Usuario...', pId);
+const getCargoActual = async (pId) => {
+    console.log('Verificando si usuario tiene cargo no jefe...', pId);
     try {
-        const result = await pool.query(`select nombre, cui 
-        from mipistio_catalogo.cat_usuarios
-        where id_usuario = ${pId};`);
-
+        const result = await pool.query(`select cod_punto_atencion, cod_cargo
+        from mipistio_catalogo.cat_usuario_punto_atencion
+        where cod_usuario = '${pId}' and cod_cargo <11;`);
         return result.rows;
     } catch (e) {
         console.log(e);
@@ -141,4 +133,48 @@ const getIdUser = async (pId) => {
 }
 
 
-module.exports = { getUsuarios, insertUsuarios, getCuiEmailUsuario, updateUsuario, addPtoUsuario, getUserExistente, getCargoJefe, getIdUser };
+const getIdCatUser = async (pId, pCatalogo) => {
+    console.log('Veficando ID, Catalogo de Usuario...', pId, pCatalogo );
+    try {
+        const result = await pool.query(`select cod_usuario, cod_punto_atencion, cod_cargo
+        from mipistio_catalogo.cat_usuario_punto_atencion
+        where cod_usuario = '${pId}' and cod_punto_atencion = '${pCatalogo}';`);
+        return result.rows;
+    } catch (e) {
+        console.log(e);
+        console.error('Usuario no encontrado en la DB',e);
+    }
+    
+}
+
+const getEmail = async (pEmail) => {
+    console.log('Veficando correo de Usuario...', pEmail);
+    try {
+        const result = await pool.query(`select id_usuario
+        from mipistio_catalogo.cat_usuarios
+        where email = '${pEmail}';`);
+        return result.rows;
+    } catch (e) {
+        console.log(e);
+        console.error('Usuario no encontrado en la DB',e);
+    }   
+}
+
+const getCui = async (pCui) => {
+    console.log('Veficando CUI de Usuario...', pCui);
+    try {
+        const result = await pool.query(`select id_usuario
+        from mipistio_catalogo.cat_usuarios
+        where cui = '${pCui}';`);
+        return result.rows;
+    } catch (e) {
+        console.log(e);
+        console.error('Usuario no encontrado en la DB',e);
+    }
+    
+}
+
+
+module.exports = { getUsuarios, insertUsuarios, getCuiEmailUsuario, updateUsuario, 
+                    addPtoUsuario, getUserExistente, getCargoJefe, getIdCatUser, 
+                    getCargoActual, getEmail, getCui };
