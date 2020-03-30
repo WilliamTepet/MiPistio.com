@@ -2,14 +2,17 @@ const Usuario = require('../dto/Usuario');
 const Catalogo = require('../dto/Catalogo');
 const pool = require('../../config').pool;
 
-const getUsuarios = async () => {
+const getUsuarios = async (pcodPunto) => {
     try {
-        const result = await pool.query('SELECT * FROM mipistio_catalogo.cat_usuarios');
+        const result = await pool.query(`select CU.cui, CU.nombre, CU.email, CU.estado, CU.cod_rol, PA.nombre, CPA.cod_cargo
+        from mipistio_catalogo.cat_punto_atencion PA
+        join mipistio_catalogo.cat_usuario_punto_atencion CPA on CPA.cod_punto_atencion = PA.id_punto_atencion
+        join mipistio_catalogo.cat_usuarios CU on CU.id_usuario = CPA.cod_usuario;`);
         return result.rows;
     } catch (e) {
         console.log(e);
     }
-    
+
 }
 
 
