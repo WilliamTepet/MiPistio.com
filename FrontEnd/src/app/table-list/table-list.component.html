@@ -154,26 +154,30 @@
               </div>
               <div class="modal-body">
                   <form [formGroup]="puntoAtencionActualizacionForm">
-                      <div class="form-group">
-                          <mat-form-field>
-                              <input required matInput formControlName="nombrePuntoAtencion">
-                          </mat-form-field>
-                      </div>
-                      <div class="form-group">
+                    <div class="form-group">
                         <mat-form-field>
-                            <mat-label>Estado</mat-label>
-                            <mat-select required formControlName="estadoPunto">
-                                <mat-option *ngFor="let estado of estados" [value]="estado.id">
-                                    {{ estado.nombre }}
-                                </mat-option>
-                            </mat-select>
-                          </mat-form-field>
+                            <input required matInput formControlName="nombrePuntoAtencion" [(value)]="punto.nombre"
+                            name="nombrePunto">
+                        </mat-form-field>
                     </div>
-                  </form>
-              </div>
+                    <div class="form-group">
+                      <mat-form-field>
+                          <mat-label>Estado</mat-label>
+                          <mat-select required formControlName="estadoPunto" [(value)]="punto.estado">
+                              <mat-option *ngFor="let estado of estados" [value]="estado.id">
+                                  {{ estado.nombre }}
+                              </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                  </div>
+                </form>
+                </div>
               <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">CERRAR</button>
-              <button (click)="actualizarPunto()" data-dismiss="modal" [disabled]="!puntoAtencionActualizacionForm.valid" class="btn btn-primary">ACTUALIZAR PUNTO DE ATENCIÓN</button>
+              <button (click)="actualizarPunto()"
+                    [disabled]="!puntoAtencionActualizacionForm.valid"
+                    data-dismiss="modal" 
+                    class="btn btn-primary">ACTUALIZAR PUNTO DE ATENCIÓN</button>
               </div>
           </div>
           </div>
