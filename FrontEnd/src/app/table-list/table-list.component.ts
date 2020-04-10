@@ -150,6 +150,9 @@ export class TableListComponent implements OnInit {
         Swal.fire(`Se guardaron correctamente los datos del punto de atención ${nuevoPunto.id} - ${nuevoPunto.nombre}`);
 
         this.puntosAtencion.push(nuevoPunto);
+        this.dataSource = new MatTableDataSource(this.puntosAtencion);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
       }
     })
       .catch(err => {
