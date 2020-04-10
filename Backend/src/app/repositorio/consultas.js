@@ -1,5 +1,6 @@
 const Catalogo = require('../dto/Catalogo');
 const Dato = require('../dto/Dato');
+const DatoCatalogo = require('../dto/DatoCatalogo');
 const pool = require('../../config').pool;
 
 
@@ -100,7 +101,7 @@ const insertCatalogo = async (pCatalogo) => {
     }
 }
 
-const insertDatoCatalogo = async (pDatoCatalogo) => {
+const insertarPunto = async (pDatoCatalogo) => {
     console.log('Consultas ', pDatoCatalogo);
     try {
         let dato = new Dato();
@@ -119,6 +120,40 @@ const insertDatoCatalogo = async (pDatoCatalogo) => {
     }
 }
 
+const insertarDatoCatalogo = async (pDatoCatalogo) => {
+    console.log('Consultas ', pDatoCatalogo);
+    try {
+        let dato = new DatoCatalogo();
+        dato = pDatoCatalogo
+        const query = `INSERT INTO mipistio_catalogo.catalogo_dato
+                    VALUES (nextval('s_id_catalogo_dato'), ${dato.codigoCatalogo}, '${dato.nombre}', 
+                            ${dato.estado}, '${dato.descripcion}', '${dato.usuarioAgrega}', 
+                            '${dato.usuarioModifica}', '${dato.fechaIngreso}', '${dato.fechaModifica}', 
+                            '${dato.ipAgrega}', '${dato.ipModifica}');`;
+        console.log('Query ', query);
+        const result = await pool.query(query);
+        return result;
+    } catch (e) {
+        console.log(e);
+        return { message: 'no se pudo insertar el dato al catalogo' };
+    }
+}
+
+const updateDatoCatalogo= async (dato) => {
+    try {
+        const resultado = await pool.query(`UPDATE mipistio_catalogo.catalogo_dato
+                                        SET estado = ${dato.estado}, descripcion = '${dato.descripcion}',
+                                        usuario_modifica = '${dato.usuarioModifica}', fecha_modifica = '${dato.fechaModifica}',
+                                        ip_modifica = '${dato.ipModifica}'
+                                        WHERE codigo_catalogo = ${dato.codigoCatalogo} and codigo = ${dato.codigo}`);
+        console.log('Resultado del update ', resultado)
+        return resultado;
+    } catch (e) {
+        console.log(e)
+        return [];
+    }
+}
+
 
 
 module.exports = { 
@@ -127,8 +162,10 @@ module.exports = {
     getDatoCatalogo,
     insertCatalogo,
     getUsuario,
-    insertDatoCatalogo,
+    insertarPunto,
     getPuntoAtencion,
     getUsuariosByPuntoAtencion,
-    updatePuntoAtencion
+    updatePuntoAtencion,
+    insertarDatoCatalogo,
+    updateDatoCatalogo
 };

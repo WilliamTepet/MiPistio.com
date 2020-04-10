@@ -3,10 +3,12 @@ const {
     obtenerCatalogos,
     insertarCatalogo,
     obtenerDatoCatalogo,
-    insertarDatoCatalogo,
+    insertarPuntoAtencion,
     obtenerPuntosAtencion,
     obtenerUsuariosPorPunto,
     actualizarPunto,
+    insertarDatoCat,
+    updateDatoCat,
     getLogin 
 } = require('../servicios/CatalogosServicio');
 
@@ -58,7 +60,22 @@ router.post('/insertar-dato', async (req, res) => {
     let dato = req.body;
     console.log('Controller ', dato);
     if (login.auth) {
-        resultado = await insertarDatoCatalogo(dato);
+        resultado = await insertarPuntoAtencion(dato);
+        status = 200;
+    } else {
+        status = 401;
+        resultado = { message: 'No tiene autorizacion' };
+    }
+    res.status(status).json(resultado);
+});
+
+router.post('/insertar-dato-catalogo', async (req, res) => {
+    let login = await getLogin(req);
+    let status, resultado;
+    let dato = req.body;
+    console.log('Controller ', dato);
+    if (login.auth) {
+        resultado = await insertarDatoCat(dato);
         status = 200;
     } else {
         status = 401;
@@ -107,6 +124,21 @@ router.put('/actualizar-punto-atencion', async (req, res) => {
             status = 200;
             resultado = { status: 2, message: `Existen ${usuarios.puntos} usuarios activos` };
         }
+    } else {
+        status = 401;
+        resultado = { message: 'No tiene autorizacion' };
+    }
+    res.status(status).json(resultado);
+})
+
+router.put('/actualizar-dato-catalogo', async (req, res) => {
+    let login = await getLogin(req);
+    let dato = req.body;
+    let status, resultado;
+    if (login.auth) {
+        resultado = await updateDatoCat(dato);
+        console.log('dato actualizado ', resultado)
+        status = 200;
     } else {
         status = 401;
         resultado = { message: 'No tiene autorizacion' };

@@ -145,7 +145,7 @@ export class TableListComponent implements OnInit {
       ipModifica: this.ip
     }
 
-    await this.servicio.postDatoCatalogo(dato).toPromise().then(res => {
+    await this.servicio.postPuntoAtencion(dato).toPromise().then(res => {
       if (res.status) {
         Swal.fire(`Se guardaron correctamente los datos del punto de atención ${nuevoPunto.id} - ${nuevoPunto.nombre}`);
 

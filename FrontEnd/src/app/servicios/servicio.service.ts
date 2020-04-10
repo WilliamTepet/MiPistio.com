@@ -39,8 +39,17 @@ export class ServicioService {
       .map(res => res);
   }
 
-  public postDatoCatalogo(pDato): Observable<any> {
+  public postPuntoAtencion(pDato): Observable<any> {
     return this.http.post<any>(`${this.URL_CATALOGOS}/insertar-dato`, pDato,this.httpOptions)
+      .pipe(
+        retry(3),
+        catchError(this.handleError)
+      )
+      .map(res => res);
+  }
+  
+  public postDatoCatalogo(pDato): Observable<any> {
+    return this.http.post<any>(`${this.URL_CATALOGOS}/insertar-dato-catalogo`, pDato,this.httpOptions)
       .pipe(
         retry(3),
         catchError(this.handleError)
@@ -77,6 +86,15 @@ export class ServicioService {
 
   public updatePunto(punto): Observable<any> {
     return this.http.put<any>(`${this.URL_CATALOGOS}/actualizar-punto-atencion`, punto, this.httpOptions)
+      .pipe(
+        retry(3),
+        catchError(this.handleError)
+      )
+      .map(res => res);
+  }
+
+  public updateDatoCatalogo(dato): Observable<any> {
+    return this.http.put<any>(`${this.URL_CATALOGOS}/actualizar-dato-catalogo`, dato, this.httpOptions)
       .pipe(
         retry(3),
         catchError(this.handleError)
