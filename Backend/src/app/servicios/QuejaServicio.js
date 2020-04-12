@@ -1,7 +1,7 @@
 const { getUsuario } = require('../repositorio/consultas');
 const { getUsuarios, insertUsuarios, getCuiEmailUsuario, updateUsuario, getIdCatUser, 
         getCargoJefe, addPtoUsuario, getUserExistente, getCargoActual,
-        getCui, getEmail, cod_cargo_jefe} = require('../repositorio/ConsultasUsuarios');  
+        getCui, getEmail} = require('../repositorio/ConsultasUsuarios');
 
 //verifica password y usuario correcto para login
 async function verificarAuthUsuario(pUsuario, pPassword) {
@@ -45,7 +45,7 @@ async function verificarUsuario(pCui, pEmail) {
         //console.log(ptoAtencion);
         for (i = 0; i<user.length; i++){
             rolActual = user[i].cod_cargo;
-            if (rolActual != cod_cargo_jefe){
+            if (rolActual != 11){
                 cargoJefe = false;
                 codPtoActual = user[i].cod_punto_atencion;
                 console.log('busqueda de rol ', cargoJefe);

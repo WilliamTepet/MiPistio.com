@@ -3,7 +3,6 @@ const { obtenerUsuarios,  insertarUsuarios, verificarCargoUsuario, verificarUsua
     verificarRolUsuario, agregarPtoUsuario, verificarCatUsuario, verificarIdCatUsuario, 
     verificarCargoUsuarioId, verificarCui, verificarEmail } = require('../servicios/UsuarioServicio');
 const { getLogin } = require('../servicios/CatalogosServicio');
-const cod_rol_jefe = 22; //codigo del rol de jefe
 
 
 router.get('/listado', async (req, res) => {
@@ -29,8 +28,7 @@ router.post('/agregar', async (req, res)=>{
         userExiste = false;
         if (usuario.usuarioExiste){
             const cargo = await verificarCargoUsuario (datos.cui);
-            console.log ('obteniendo cargo',cargo.cargoNoJefe);
-            if (cargo.cargoNoJefe && datos.cod_cargo != cod_rol_jefe){
+            if (cargo.cargoNoJefe && datos.cod_cargo != 11){
                 userExiste = true;
             }
         }
@@ -56,7 +54,7 @@ router.post('/agregar', async (req, res)=>{
                     }
                     else{
                         let postUser = await insertarUsuarios(datos);
-                        res.json({message: 'Se guardaron correctamente los datos del usuario para el punto de atención v2'});
+                        res.json({message: 'Se guardaron correctamente los datos del usuario para el punto de atención'});
                     }
                 }
             }
@@ -90,7 +88,7 @@ router.put('/actualizar/:id', async (req, res)=>{
             const emailUsuario = await verificarEmail(datos.email);
             valCargo = false;
             //validacion para condiciones de actualización de cargo
-            if (cargo.cargoNoJefe && datos.cod_cargo != cod_rol_jefe && (datos.codigo != cargo.codPtoAtencion)){
+            if (cargo.cargoNoJefe && datos.cod_cargo != 11 && (datos.codigo != cargo.codPtoAtencion)){
                     valCargo = true;
             }
             console.log('actualizandoo', valCargo, cargoNoJefe, cuiUsuario.userId, emailUsuario.userId);

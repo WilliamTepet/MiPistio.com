@@ -5,9 +5,11 @@ const {
     getDatoCatalogo,
     insertCatalogo,
     getUsuario,
-    insertDatoCatalogo,
+    insertarPunto,
     getUsuariosByPuntoAtencion,
-    updatePuntoAtencion
+    updatePuntoAtencion,
+    insertarDatoCatalogo,
+    updateDatoCatalogo
 } = require('../repositorio/consultas');
 
 
@@ -32,10 +34,29 @@ async function insertarCatalogo(catalogo) {
     return result;
 }
 
-async function insertarDatoCatalogo(pDato) {
+async function insertarPuntoAtencion(pDato) {
     console.log('Servicio ', pDato);
-    const result = await insertDatoCatalogo(pDato);
+    const result = await insertarPunto(pDato);
     return { status: 'ok' };
+}
+
+async function insertarDatoCat(pDato) {
+    console.log('Servicio ', pDato);
+    const result = await insertarDatoCatalogo(pDato);
+    return { status: 'ok' };
+}
+
+async function updateDatoCat(pDato) {
+    console.log('Servicio ', pDato);
+    const result = await updateDatoCatalogo(pDato);
+    if (result.rowCount > 0) {
+        return { status:1, message: 'dato actualizado' };
+    } else if (result.rowCount === 0) {
+        return { status:2, message: 'dato no existe' };
+    } else {
+        return { status:3, message: 'ocurrio un error' };
+    }
+    
 }
 
 async function obtenerUsuariosPorPunto(pPunto) {
@@ -77,9 +98,11 @@ module.exports = {
     obtenerCatalogos,
     insertarCatalogo,
     obtenerDatoCatalogo,
-    insertarDatoCatalogo,
+    insertarPuntoAtencion,
     obtenerPuntosAtencion,
     obtenerUsuariosPorPunto,
     actualizarPunto,
+    insertarDatoCat,
+    updateDatoCat,
     getLogin
 }

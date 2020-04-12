@@ -24,6 +24,7 @@ import {
 } from '@agm/core';
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 import { LoginComponent } from './login/login.component';
+import { Interceptor } from './http-interceptors/interceptor';
 
 @NgModule({
   exports: [
@@ -49,7 +50,9 @@ import { LoginComponent } from './login/login.component';
     LoginComponent,
 
   ],
-  providers: [],
+  providers: [{
+    provide: HTTP_INTERCEPTORS, useClass: Interceptor, multi: true
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

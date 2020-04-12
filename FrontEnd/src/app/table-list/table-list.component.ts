@@ -145,11 +145,14 @@ export class TableListComponent implements OnInit {
       ipModifica: this.ip
     }
 
-    await this.servicio.postDatoCatalogo(dato).toPromise().then(res => {
+    await this.servicio.postPuntoAtencion(dato).toPromise().then(res => {
       if (res.status) {
         Swal.fire(`Se guardaron correctamente los datos del punto de atención ${nuevoPunto.id} - ${nuevoPunto.nombre}`);
 
         this.puntosAtencion.push(nuevoPunto);
+        this.dataSource = new MatTableDataSource(this.puntosAtencion);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
       }
     })
       .catch(err => {
