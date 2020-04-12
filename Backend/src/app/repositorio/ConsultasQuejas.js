@@ -1,11 +1,10 @@
 const Usuario = require('../dto/Usuario');
 const Catalogo = require('../dto/Catalogo');
 const pool = require('../../config').pool;
-const cod_cargo_jefe = 22; //codigo del rol de jefe
 
 const getUsuarios = async (pcodPunto) => {
     try {
-        const result = await pool.query(`select CU.cui, CU.nombre, CU.email, CU.estado, CU.cod_rol, PA.nombre as punto, CPA.cod_cargo
+        const result = await pool.query(`select CU.cui, CU.nombre, CU.email, CU.estado, CU.cod_rol, PA.nombre, CPA.cod_cargo
         from mipistio_catalogo.cat_punto_atencion PA
         join mipistio_catalogo.cat_usuario_punto_atencion CPA on CPA.cod_punto_atencion = PA.id_punto_atencion
         join mipistio_catalogo.cat_usuarios CU on CU.id_usuario = CPA.cod_usuario;`);
@@ -28,7 +27,7 @@ const getCuiEmailUsuario = async (pCui, pEmail) => {
 
     } catch (e) {
         console.log(e);
-        console.error('Usuario no encontrado en la DB',e);
+        console.error('Usuairo no encontrado en la DB',e);
     }
     
 }
@@ -101,7 +100,7 @@ const getUserExistente = async (pCui, pCatalogo) => {
         return result.rows;
     } catch (e) {
         console.log(e);
-        console.error('Usuario no encontrado en la DB',e);
+        console.error('Usuairo no encontrado en la DB',e);
     }
     
 }
@@ -113,7 +112,7 @@ const getCargoJefe = async (pCui) => {
         from mipistio_catalogo.cat_punto_atencion PA
         join mipistio_catalogo.cat_usuario_punto_atencion CPA on CPA.cod_punto_atencion = PA.id_punto_atencion
         join mipistio_catalogo.cat_usuarios CU on CU.id_usuario = CPA.cod_usuario
-        where cui = '${pCui}' and cast (CPA.cod_cargo as varchar) not like '${cod_cargo_jefe}';`);
+        where cui = '${pCui}' and CPA.cod_cargo < 11;`);
         return result.rows;
     } catch (e) {
         console.log(e);
@@ -127,7 +126,7 @@ const getCargoActual = async (pId) => {
     try {
         const result = await pool.query(`select cod_punto_atencion, cod_cargo
         from mipistio_catalogo.cat_usuario_punto_atencion
-        where cod_usuario = '${pId}' and cast (cod_cargo as varchar) not like '${cod_cargo_jefe}';`);
+        where cod_usuario = '${pId}' and cod_cargo <11;`);
         return result.rows;
     } catch (e) {
         console.log(e);
@@ -181,4 +180,4 @@ const getCui = async (pCui) => {
 
 module.exports = { getUsuarios, insertUsuarios, getCuiEmailUsuario, updateUsuario, 
                     addPtoUsuario, getUserExistente, getCargoJefe, getIdCatUser, 
-                    getCargoActual, getEmail, getCui, cod_cargo_jefe };
+                    getCargoActual, getEmail, getCui };
