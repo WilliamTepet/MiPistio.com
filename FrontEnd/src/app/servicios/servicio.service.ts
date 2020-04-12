@@ -16,6 +16,7 @@ export class ServicioService {
   URL_CATALOGOS = `${this.BASE_URL}/catalogos`;
   URL_LOGIN = `${this.BASE_URL}/login`;
   URL_PUNTOS =`${this.URL_CATALOGOS}/puntos`;
+  URL_USUARIOS = `${this.BASE_URL}/usuarios`;
  
   LOGIN = btoa(`${sessionStorage.getItem('username')}:${sessionStorage.getItem('password')}`);
   AUTH = `Basic ${this.LOGIN}`;
@@ -59,5 +60,14 @@ export class ServicioService {
       .map(res => res);
   }
 
+  public getUsuarios(): Observable<any> {
+    return this.http.get<any>(`${this.URL_USUARIOS}/listado`, this.httpOptions)
+      .map(res => res);
+  }
+
+  public postUsuario(usuario: any): Observable<any> {
+    return this.http.post<any>(`${this.URL_USUARIOS}/agregar`,usuario,this.httpOptions)
+      .map(res => res);
+  }
 
 }
