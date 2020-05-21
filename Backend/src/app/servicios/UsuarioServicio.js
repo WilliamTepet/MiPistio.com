@@ -1,7 +1,9 @@
+const decode = require('atob');
 const { getUsuario } = require('../repositorio/consultas');
 const { getUsuarios, insertUsuarios, getCuiEmailUsuario, updateUsuario, getIdCatUser, 
         getCargoJefe, addPtoUsuario, getUserExistente, getCargoActual,
-        getCui, getEmail, cod_cargo_jefe} = require('../repositorio/ConsultasUsuarios');  
+        getCui, getEmail, cod_cargo_jefe, cod_cargo_sup, cod_cargo_centr, cod_cargo_encar,
+        cod_cargo_recep,cod_cargo_tit, cod_cargo_admin, getRolByEmail} = require('../repositorio/ConsultasUsuarios');  
 
 //verifica password y usuario correcto para login
 async function verificarAuthUsuario(pUsuario, pPassword) {
@@ -83,7 +85,7 @@ async function verificarCatUsuario (pCui, pCatalogo) {
 
 async function verificarCargoUsuario (pCui) {
     const cargo = await getCargoJefe(pCui);
-    //console.log('filas de DB para usuario', cat);
+    console.log('filas de DB para usuario', cat);
     if (cargo.length >= 1) {
         cargoNoJefe = true;
     }
@@ -113,7 +115,6 @@ async function verificarCargoUsuarioId (pId) {
     //console.log('filas de DB para usuario', getCargo);
     if (getCargo.length >= 1) {
         cargoNoJefe = true;
-        codPtoAtencion = getCargo[0].cod_punto_atencion;
     }
     else{
         cargoNoJefe = false;
@@ -121,7 +122,58 @@ async function verificarCargoUsuarioId (pId) {
     }
     console.log ('codigo punto atencion no jefe', codPtoAtencion);
     return {cargoNoJefe, codPtoAtencion};
+    
 }
+
+
+async function verificarRolByEmail (req) { 
+    let headers = req.headers;
+    // console.log('Headers: ', headers);
+    if (headers.authorization) {
+        auth = decode(headers.authorization.split(" ")[1]);
+        auth = auth.split(':');
+        let login = { user: auth[0], password: auth[1]};
+        console.log ('usuario y clave ',login.user, login.password);
+        if (login.user == '' || login.password == ''){
+            return {auth: false};
+        }
+        else{   
+            const getRol = await getRolByEmail(login.user, login.password);
+            if (getRol.length >= 1) {
+                auth = true; //variable para determinar que el usuario si se autentico
+                nom_usuario = getRol[0].nombre;
+                id_usuario = getRol[0].id_usuario;
+                rolAdministrador = false, rolReceptor = false, rolCentralizador = false;
+                for (i = 0; i<getRol.length; i++){
+                    rolActual = getRol[i].cod_rol;
+                    switch (rolActual){
+                        case cod_cargo_admin:
+                            rolAdministrador = true;
+                            break;
+                        case cod_cargo_centr:
+                            rolCentralizador = true;
+                            break;
+                        case cod_cargo_recep:
+                            rolReceptor = true;
+                            break;
+                    }
+                }
+            }
+            else{
+                rolAdministrador = false, rolReceptor = false, 
+                rolCentralizador = false, auth = false, nom_usuario = '', id_usuario=0;
+            }
+        }
+        
+    }
+    else{
+        rolAdministrador = false, rolReceptor = false, rolCentralizador = false;
+    }
+    return {rolAdministrador, rolCentralizador, rolReceptor, auth, nom_usuario, id_usuario};
+    
+}
+
+
 
 async function verificarCui (pCui) {
     const cui = await getCui(pCui);
@@ -134,6 +186,7 @@ async function verificarCui (pCui) {
     }
     return {userId};
 }
+
 
 async function verificarEmail (pEmail) {
     const email = await getEmail(pEmail);
@@ -181,4 +234,4 @@ async function agregarPtoUsuario(id, usuario) {
 module.exports = { verificarAuthUsuario, verificarRolUsuario, obtenerUsuarios, 
                     insertarUsuarios, verificarUsuario, actualizarUsuarios,agregarPtoUsuario, 
                     verificarCatUsuario, verificarCargoUsuario, verificarIdCatUsuario,
-                    verificarCargoUsuarioId, verificarEmail, verificarCui};
+                    verificarCargoUsuarioId, verificarEmail, verificarCui, verificarRolByEmail};

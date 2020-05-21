@@ -20,6 +20,9 @@ export class ServicioService {
   URL_PUNTOS = `${this.URL_CATALOGOS}/puntos`;
   URL_QUEJAS = `${this.BASE_URL}/quejas`;
 
+  URL_EMPLEADOS =`${this.BASE_URL}/empleados`;
+  URL_USUARIOS = `${this.BASE_URL}/usuarios`;
+ 
   /* LOGIN = btoa(`${sessionStorage.getItem('username')}:${sessionStorage.getItem('password')}`);
   AUTH = `Basic ${this.LOGIN}`; */
 
@@ -69,6 +72,34 @@ export class ServicioService {
       .map((res) => res);
   }
 
+  public postQueja(pDato): Observable<any> {
+    return this.http.post<any>(`${this.URL_QUEJAS}/agregar`, pDato,this.httpOptions)
+      .pipe(
+        retry(3),
+        catchError(this.handleError)
+      )
+      .map(res => res);
+  }
+
+  
+  public getQueja(): Observable<any> {
+    return this.http.get<any>(this.URL_QUEJAS, this.httpOptions)
+      .pipe(
+        retry(3),
+        catchError(this.handleError)
+      )
+      .map(res => res);
+  }
+
+  public getEmpleado(): Observable<any> {
+    return this.http.get<any>(this.URL_EMPLEADOS, this.httpOptions)
+      .pipe(
+        retry(3),
+        catchError(this.handleError)
+      )
+      .map(res => res);
+  }
+
   public getUsuario(userLogin: any): Observable<any> {
     return this.http
       .post<any>(this.URL_LOGIN, userLogin)
@@ -84,10 +115,12 @@ export class ServicioService {
   }
 
   public getIp(): Observable<any> {
-    return this.http
-      .get<any>("https://api6.ipify.org/?format=json")
-      .pipe(retry(3), catchError(this.handleError))
-      .map((res) => res);
+    return this.http.get<any>('https://api.ipify.org?format=json')
+      .pipe(
+        retry(3),
+        catchError(this.handleError)
+      )
+      .map(res => res);
   }
 
   public updatePunto(punto): Observable<any> {
@@ -101,6 +134,24 @@ export class ServicioService {
       .map((res) => res);
   }
 
+  public getUsuarios(): Observable<any> {
+    return this.http.get<any>(`${this.URL_USUARIOS}/listado`, this.httpOptions)
+      .map(res => res);
+  }
+
+  public updateUsuario(usuario): Observable<any> {
+    return  this.http.put<any>(`${this.URL_USUARIOS}/actualizar/${usuario.id}`, usuario, this.httpOptions)
+    .pipe(
+      retry(3),
+      catchError(this.handleError)
+    )
+    .map(res => res);
+  }
+
+  public postUsuario(usuario: any): Observable<any> {
+    return this.http.post<any>(`${this.URL_USUARIOS}/agregar`,usuario,this.httpOptions)
+      .map(res => res);
+  }
   public updateDatoCatalogo(dato): Observable<any> {
     return this.http
       .put<any>(

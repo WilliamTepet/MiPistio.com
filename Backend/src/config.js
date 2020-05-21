@@ -1,6 +1,6 @@
 const pgp = require("pg-promise")();
 const { Pool } = require('pg');
-const cn = 'postgres://postgres:123456@35.222.162.190:5432/postgres';
+const cn = 'postgres://postgres:123456@35.225.155.141:5432/postgres';
 const db = pgp(cn);
 
 const configDB = {

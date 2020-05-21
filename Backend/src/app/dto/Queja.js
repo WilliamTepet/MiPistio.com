@@ -1,24 +1,28 @@
-class Usuario {
-    id_usuario;
-    cargo;
-    cui;
-    nombre;
+class Queja {
+    id_queja;
+    codigo;
+    nombre_cliente;
     email;
-    estado;
-    cod_cargo;
-    cod_rol;
-    usuario_agrega;
-    usuario_modifica;
+    telefono;
+    punto_atencion;
+    nombre_empleado;
+    descripcion;
+    estado_externo;
+    estado_interno;
+    ingreso_queja;
+    cod_forma_ingreso;
+    tipo_queja;
+    archivo;
     fecha_ingreso;
     fecha_modifica;
-    ip_agrega;
-    ip_modifica;
-    password;
+    usuario_agrega;
+    usuario_modifica;
+    respuesta;
 
-    constructor(id_usuario){
-        this.id_usuario = id_usuario;
+    constructor(id_queja){
+        this.id_queja = id_queja;
     }
     
 }
 
-module.exports = Usuario;
+module.exports = Queja;
