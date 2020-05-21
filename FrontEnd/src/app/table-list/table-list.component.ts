@@ -146,6 +146,7 @@ export class TableListComponent implements OnInit {
     }
 
     await this.servicio.postPuntoAtencion(dato).toPromise().then(res => {
+      console.log(res.status);
       if (res.status) {
         Swal.fire(`Se guardaron correctamente los datos del punto de atención ${nuevoPunto.id} - ${nuevoPunto.nombre}`);
 

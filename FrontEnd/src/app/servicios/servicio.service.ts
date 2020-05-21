@@ -18,6 +18,8 @@ export class ServicioService {
   URL_CATALOGOS = `${this.BASE_URL}/catalogos`;
   URL_LOGIN = `${this.BASE_URL}/login`;
   URL_PUNTOS =`${this.URL_CATALOGOS}/puntos`;
+  URL_QUEJAS =`${this.BASE_URL}/quejas`;
+  URL_EMPLEADOS =`${this.BASE_URL}/empleados`;
  
   /* LOGIN = btoa(`${sessionStorage.getItem('username')}:${sessionStorage.getItem('password')}`);
   AUTH = `Basic ${this.LOGIN}`; */
@@ -50,6 +52,34 @@ export class ServicioService {
   
   public postDatoCatalogo(pDato): Observable<any> {
     return this.http.post<any>(`${this.URL_CATALOGOS}/insertar-dato-catalogo`, pDato,this.httpOptions)
+      .pipe(
+        retry(3),
+        catchError(this.handleError)
+      )
+      .map(res => res);
+  }
+
+  public postQueja(pDato): Observable<any> {
+    return this.http.post<any>(`${this.URL_QUEJAS}/agregar`, pDato,this.httpOptions)
+      .pipe(
+        retry(3),
+        catchError(this.handleError)
+      )
+      .map(res => res);
+  }
+
+  
+  public getQueja(): Observable<any> {
+    return this.http.get<any>(this.URL_QUEJAS, this.httpOptions)
+      .pipe(
+        retry(3),
+        catchError(this.handleError)
+      )
+      .map(res => res);
+  }
+
+  public getEmpleado(): Observable<any> {
+    return this.http.get<any>(this.URL_EMPLEADOS, this.httpOptions)
       .pipe(
         retry(3),
         catchError(this.handleError)
