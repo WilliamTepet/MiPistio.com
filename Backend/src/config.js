@@ -5,7 +5,7 @@ const db = pgp(cn);
 
 const configDB = {
     user: 'postgres',
-    host: '35.222.162.190',
+    host: '35.225.155.141',
     password: '123456',
     database: 'postgres'
 }
@@ -14,6 +14,7 @@ const pool = new Pool(configDB);
 
 const config = {
     port: 3000,
+    secretKey: '6LdC8PgUAAAAAFzCG60Py5Mhs7VoK_W-1JLfIElc'
 }
 
 module.exports = { config, db, pool }

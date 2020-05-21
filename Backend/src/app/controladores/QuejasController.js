@@ -1,8 +1,31 @@
 const router = require('express').Router();
+const path = require("path");
+const multer = require("multer");
+
 const { obtenerUsuarios,  insertarUsuarios, verificarCargoUsuario, verificarUsuario, actualizarUsuarios, 
     verificarRolUsuario, agregarPtoUsuario, verificarCatUsuario, verificarIdCatUsuario, 
     verificarCargoUsuarioId, verificarCui, verificarEmail } = require('../servicios/UsuarioServicio');
 const { getLogin } = require('../servicios/CatalogosServicio');
+
+var nombreArchivo = '';
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(process.cwd(), "/public/uploads"));
+  },
+  filename: function (req, file, cb) {
+    nombreArchivo = Date.now() + path.extname(file.originalname);
+    cb(null, nombreArchivo); //Appending extension
+  },
+});
+var upload = multer({
+  storage: storage,
+  fileFilter: function (req, file, cb) {
+    if (!file.originalname.match(/\.(pdf|doc|docx|jpg)$/)) {
+      return cb(new Error("Error en el tipo de archivo."));
+    }
+    cb(null, true);
+  },
+});
 
 
 router.get('/listado', async (req, res) => {
@@ -19,6 +42,7 @@ router.get('/listado', async (req, res) => {
 });
 
 router.post('/agregar', async (req, res)=>{
+
     let login = await getLogin(req);
     let datos = req.body;
     if (login.auth) {
@@ -74,6 +98,12 @@ router.post('/agregar', async (req, res)=>{
     }
 });
 
+// Agregar queja desde portal
+router.post('/agregar-portal', upload.single('archivo'), async (req, res) => {
+    console.log("Request: ", req.body);
+    console.log('Nombre archivo ', nombreArchivo);
+    res.json({ message: 'ok' });
+});
 
 router.put('/actualizar/:id', async (req, res)=>{
     let login = await getLogin(req);
