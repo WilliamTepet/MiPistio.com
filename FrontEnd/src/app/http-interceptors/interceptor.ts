@@ -19,6 +19,7 @@ export class Interceptor implements HttpInterceptor {
         console.log('Peticion ', req.url);
         console.log('Peticion ', req.url.split('/').find(e => e === 'api'));
 
+        // Seteo en las cabeceras la autenticación cuando no se realice desde los servicios
         if (req.url.split('/').find(e => e === 'api') !== undefined) {
             authReq = req.clone({ setHeaders: { Authorization: authLogin }});
         } else {

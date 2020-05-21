@@ -14,10 +14,15 @@ export class AuthService {
 
   isLoggedIn = false;
 
-  // store the URL so we can redirect after logging in
+  // Guardo la url a la que se va a redirigir cuando inicie sesion
   redirectUrl: string;
 
   login(userLogin): Observable<boolean> {
+
+    /* if (sessionStorage.getItem('username') && sessionStorage.getItem('password')) {
+      this.isLoggedIn = true;
+      return of(true);
+    } */
 
     const login = new Observable<boolean>(subscriber => {
       this.servicio.getUsuario(userLogin).subscribe(res => {
