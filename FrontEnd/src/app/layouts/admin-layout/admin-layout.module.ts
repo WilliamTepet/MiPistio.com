@@ -23,6 +23,9 @@ import { MatPaginatorModule, MatPaginatorIntl } from '@angular/material/paginato
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorIntlCro } from 'app/modelos/customClass';
 
+import { RecaptchaModule, RecaptchaFormsModule } from 'ng-recaptcha';
+import { QuejasComponent } from 'app/components/quejas/quejas.component';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -38,7 +41,9 @@ import { MatPaginatorIntlCro } from 'app/modelos/customClass';
     MatTableModule,
     MatSliderModule,
     MatPaginatorModule,
-    MatSortModule
+    MatSortModule,
+    RecaptchaModule,
+    RecaptchaFormsModule
   ],
   declarations: [
     DashboardComponent,
@@ -49,6 +54,7 @@ import { MatPaginatorIntlCro } from 'app/modelos/customClass';
     MapsComponent,
     NotificationsComponent,
     UpgradeComponent,
+    QuejasComponent
   ],
   providers: [{ provide: MatPaginatorIntl, useClass: MatPaginatorIntlCro }]
 })

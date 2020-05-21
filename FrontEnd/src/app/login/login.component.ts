@@ -40,21 +40,7 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['table-list']);
       }
     })
-    /* let auth = await this.servicio.getUsuario(userLogin).toPromise().catch(e => {
-      console.log('Ocurrio un error');
-    });
-    if (auth.usuario) {
-      sessionStorage.setItem('username', auth.usuario);
-      sessionStorage.setItem('password', auth.password);
-      console.log('autenticacion, ', auth);
-      this.router.navigate(['table-list']);
-    } else {
-      Swal.fire({
-        icon: 'error',
-        title: 'Credenciales incorrectas!',
-        text: 'Las credenciales ingresadas son incorrectas'
-      })
-    } */
+
   } 
 
 }

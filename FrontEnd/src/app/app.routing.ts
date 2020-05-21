@@ -6,13 +6,10 @@ import { Routes, RouterModule } from '@angular/router';
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 import { LoginComponent } from './login/login.component';
 import { AuthGuard } from './guards/auth.guard';
+import { PortalComponent } from './portal/portal.component';
+import { QuejasDenunciasComponent } from './quejas-denuncias/quejas-denuncias.component';
 
 const routes: Routes =[
-  {
-    path: '',
-    redirectTo: 'login',
-    pathMatch: 'full',
-  }, 
   {
     path: '',
     component: AdminLayoutComponent,
@@ -25,6 +22,14 @@ const routes: Routes =[
   {
     path: 'login',
     component: LoginComponent
+  },
+  {
+    path: 'portal',
+    component: PortalComponent
+  },
+  {
+    path: 'quejas-denuncias',
+    component: QuejasDenunciasComponent
   }
 ];
 

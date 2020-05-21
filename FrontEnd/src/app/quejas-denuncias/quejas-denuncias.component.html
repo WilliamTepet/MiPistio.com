@@ -1,0 +1,123 @@
+<!-- NAVEGACION -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light whitout-margin-bottom">
+    <a class="navbar-brand" href="#">
+      <img src="assets/img/moneda.png" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy">
+      Mi pistio
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <ul class="navbar-nav right">
+            <li class="nav-item active">
+                <a class="nav-link" routerLink="/portal">Home <span class="sr-only">(current)</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" routerLink="/portal">Features</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Contacto
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                  <a class="dropdown-item" routerLink="/quejas-denuncias">Quejas y Denuncias</a>
+                  <a class="dropdown-item" href="#">Another action</a>
+                  <a class="dropdown-item" href="#">Something else here</a>
+                </div>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" routerLink="/portal">Pricing</a>
+              </li>
+        </ul>
+    </div>
+  </nav>
+
+  <!-- CONTENIDO -->
+  <div *ngIf="!recaptchaValido" class="container padding-top">
+    <div class="row">
+        <div class="col-md-12">
+            <form [formGroup]="reactiveForm">
+                <re-captcha (resolved)="resolved($event)" siteKey="{{siteKey}}" formControlName="recaptchaReactive"></re-captcha>
+                <!-- <button [disabled]="reactiveForm.invalid">Submit</button> -->
+            </form>
+        </div>
+    </div>
+  </div>
+  <div *ngIf="recaptchaValido" class="container padding-top">
+      <div class="row bg-white">
+          <div class="col-md-12">
+            <form [formGroup]="quejaForm">
+                <div class="form-group">
+                    <mat-form-field class="">
+                        <input formControlName="nombre" matInput placeholder="Nombre (*)">
+                    </mat-form-field>
+                </div>
+                <div class="form-group">
+                    <mat-form-field class="">
+                        <input type="email" formControlName="email" matInput placeholder="Correo Electrónico (*)">
+                    </mat-form-field>
+                </div>
+                <div class="form-group">
+                    <mat-form-field class="">
+                        <input formControlName="telefono" matInput placeholder="Teléfono (*)">
+                    </mat-form-field>
+                </div>
+                <div class="form-group">
+                    <mat-form-field>
+                        <mat-label>Oficina Tributaria</mat-label>
+                        <mat-select formControlName="oficina">
+                            <mat-option *ngFor="let oficina of oficinas" [value]="oficina.codigo">
+                                {{ oficina.nombre }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="form-group">
+                    <mat-form-field class="">
+                        <input formControlName="empleado" matInput placeholder="Nombre del Empleado o Funcionario">
+                    </mat-form-field>
+                </div>
+                <div class="form-group">
+                    <mat-form-field class="">
+                        <textarea #detalle (keyup)="contar()"  maxlength="1000" matInput formControlName="detalle" cols="30" rows="10"></textarea>
+                        <span>{{ caracteres }}/1000</span>
+                    </mat-form-field>
+                </div>
+                <div class="form-group">
+                  <label for="archivoQueja" class="archivo">Seleccionar Archivo</label>
+                  <input type="file" formControlName="archivo" id="archivoQueja" (change)="handleFile($event.target.files)">
+                </div>
+                <div class="form-group">
+                  <span>{{ nombreArchivo }}</span>
+                </div>
+                <button (click)="enviarQueja()" data-dismiss="modal" [disabled]="!quejaForm.valid" class="btn btn-primary">ENVIAR QUEJA</button>
+            </form>
+          </div>
+      </div>
+  </div>
+
+  <!-- FOOTER -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light whitout-margin-bottom footer">
+    <a class="navbar-brand" href="#">
+      Mi pistio
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <ul class="navbar-nav right">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Features</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Pricing</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Pricing</a>
+              </li>
+        </ul>
+    </div>
+  </nav>
