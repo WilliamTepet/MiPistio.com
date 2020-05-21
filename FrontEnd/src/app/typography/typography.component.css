@@ -1,0 +1,10 @@
+.card-header-success, .button-success {
+    background: linear-gradient(60deg, #1d6b29, #8ec580);
+}
+.cdk-overlay-container {
+    z-index: 99999 !important;
+ }
+
+ table {
+    width: 100%;
+}

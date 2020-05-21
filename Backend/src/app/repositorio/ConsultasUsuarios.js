@@ -11,7 +11,7 @@ const cod_cargo_admin = 15; //codigo del rol de administrador
 
 const getUsuarios = async (pcodPunto) => {
     try {
-        const result = await pool.query(`select CU.cui, CU.nombre, CU.email, CU.estado, CU.cod_rol, PA.nombre as punto, CPA.cod_cargo
+        const result = await pool.query(`select CU.id_usuario, CU.cui, CU.nombre, CU.email, CU.estado, CU.cod_rol, PA.nombre as punto, CPA.cod_cargo
         from mipistio_catalogo.cat_punto_atencion PA
         join mipistio_catalogo.cat_usuario_punto_atencion CPA on CPA.cod_punto_atencion = PA.id_punto_atencion
         join mipistio_catalogo.cat_usuarios CU on CU.id_usuario = CPA.cod_usuario;`);
@@ -22,6 +22,7 @@ const getUsuarios = async (pcodPunto) => {
 
 }
 
+console.log('este es el valor de getusuarios ',getUsuarios);
 
 const getCuiEmailUsuario = async (pCui, pEmail) => {
     try {
@@ -62,20 +63,30 @@ const insertUsuarios = async (pUsuario) => { // Query para agregar usuarios
 const updateUsuario = async (pId, pUsuario) => { //Query para actualizar usuarios
     console.log('Actualizando Usuario...', pId);
     try {
-        let usuario = new Usuario();
+        // let usuario = new Usuario();
         let usuarioId = new Usuario();
         usuario = pUsuario;
         const result = await pool.query(`update mipistio_catalogo.cat_usuarios
+        set email='${usuario.email}', estado = ${usuario.estado}, 
+        cod_rol = ${usuario.cod_cargo}, usuario_modifica = '${usuario.usuarioModifica}', fecha_modifica = 
+        '${usuario.fechaModifica}', ip_modifica = '${usuario.ipModifica}'
+        where id_usuario = ${pId};
+        update mipistio_catalogo.cat_usuario_punto_atencion set cod_cargo = ${usuario.cod_cargo}
+        where cod_usuario = ${pId} and cod_punto_atencion = ${usuario.puntoAtencion};`);
+
+        /* const result = await pool.query(`update mipistio_catalogo.cat_usuarios
         set cui = '${usuario.cui}', nombre = '${usuario.nombre}', email='${usuario.email}', estado = ${usuario.estado}, 
         cod_rol = ${usuario.cod_rol}, usuario_modifica = '${usuario.usuario_modifica}', fecha_modifica = 
         '${usuario.fecha_modifica}', ip_modifica = '${usuario.ip_modifica}', password = '${usuario.password}'
         where id_usuario = '${pId}';
         update mipistio_catalogo.cat_usuario_punto_atencion set cod_cargo = ${usuario.cod_cargo}
-        where cod_usuario = '${pId}' and cod_punto_atencion = '${usuario.codigo}';`);
-        return result.rows;
+        where cod_usuario = '${pId}' and cod_punto_atencion = '${usuario.codigo}';`); */
+        
+        return { status:1, message: 'usuario actualizado' };
     } catch (e) {
         console.log(e);
         console.error('Usuairo no encontrado en la DB',e);
+        return [];
     }
     
 }

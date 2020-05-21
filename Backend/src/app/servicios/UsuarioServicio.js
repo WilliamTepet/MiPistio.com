@@ -85,7 +85,7 @@ async function verificarCatUsuario (pCui, pCatalogo) {
 
 async function verificarCargoUsuario (pCui) {
     const cargo = await getCargoJefe(pCui);
-    //console.log('filas de DB para usuario', cat);
+    console.log('filas de DB para usuario', cat);
     if (cargo.length >= 1) {
         cargoNoJefe = true;
     }

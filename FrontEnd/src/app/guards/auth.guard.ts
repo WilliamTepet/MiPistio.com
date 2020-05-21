@@ -27,6 +27,11 @@ export class AuthGuard implements CanActivate, CanActivateChild {
   }
 
   checkLogin(url: string): boolean {
+    
+    // valido que exista una sesion para no pedir que inicie sesion
+    if (sessionStorage.getItem('username') !== null && sessionStorage.getItem('password') !== null) return true;
+
+    // si no existe una sesion redirijo al login
     console.log('Estatus login ', this.authService.isLoggedIn);
     if (this.authService.isLoggedIn) return true;
 
