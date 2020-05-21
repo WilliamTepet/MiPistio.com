@@ -4,9 +4,10 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { element } from 'protractor';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators, EmailValidator } from '@angular/forms';
 import { validateHorizontalPosition } from '@angular/cdk/overlay';
 import * as moment from 'moment';
+import Swal from 'sweetalert2';
 
 
 declare interface REGION {
@@ -38,15 +39,28 @@ export class TypographyComponent implements OnInit {
       cargo: new FormControl('',Validators.required),
       password: new FormControl('',Validators.required)
     });
+
+    this.usuarioActualizacionForm = new FormGroup({
+      emailUsuario: new FormControl({ value: '' },[ Validators.required, Validators.email]),
+      cargoUsuario: new FormControl({ value: '' }, Validators.required),
+      estadoUsuario: new FormControl({ value: ''}, Validators.required)
+
+    });
    }
 
-  displayedColumns: string[] = ['id', 'cui', 'nombre', 'email', 'cargo','estado','acciones'];
+  displayedColumns: string[] = ['id', 'cui', 'nombre', 'email', 'punto','cargo','estado','acciones'];
   dataSource: MatTableDataSource<any> = new MatTableDataSource;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   usuarioFormulario: FormGroup;
+  usuarioActualizacionForm: FormGroup;
 
+   usuario: any = {
+    email: '',
+    cargo: '',
+    estado: ''
+  };
     puntosAtencion: any = [
       
     ];
@@ -59,8 +73,8 @@ export class TypographyComponent implements OnInit {
     ];
 
     estados: ESTADO[] = [
-      { id: 1, nombre: 'activo' },
-      { id: 2, nombre: 'inactivo' }
+      { id: 1, nombre: 'Activo' },
+      { id: 2, nombre: 'Inactivo' }
     ];
 
     cargos: any = [];
@@ -69,7 +83,6 @@ export class TypographyComponent implements OnInit {
     ip: string;
 
   async ngOnInit() {
-
     this.servicio.getIp()
     .subscribe(res => {
       this.ip = res.ip;
@@ -87,9 +100,9 @@ export class TypographyComponent implements OnInit {
     }).catch(e => console.log('Ocurrio un error ', e))
 
     await this.servicio.getUsuarios().toPromise().then(res => {
-      console.log(res);
+      console.log('esta es la respuesta del servicio',res);
       res.forEach(element => {
-        let usuario = { cui: element.cui, nombre: element.nombre, email: element.email, estado: element.estado, cargo: element.cod_cargo};
+        let usuario = {id: element.id_usuario, cui: element.cui, nombre: element.nombre, email: element.email, punto: element.punto, estado: element.estado, cargo: element.cod_cargo};
         console.log(usuario);
         this.usuarios.push(usuario);
         this.dataSource = new MatTableDataSource(this.usuarios);
@@ -97,9 +110,6 @@ export class TypographyComponent implements OnInit {
         this.dataSource.sort = this.sort;
       })  
     }).catch(e => console.log('Ocurrio un error ', e))
-
-
-    
   }
 
   public getEstado(id: number): string {
@@ -111,6 +121,11 @@ export class TypographyComponent implements OnInit {
     let cargo = this.cargos.find(e => e.codigo === id).nombre;
     return cargo;
   }
+
+  /* public getPuntoAtencion(id: number): string {
+    let puntoAtencion = this.puntosAtencion.find(e => e.id === id).nombre;
+    return puntoAtencion;
+  } */
 
   public async guardarUsuario() {
     let usuario = this.usuarioFormulario.value;
@@ -124,8 +139,8 @@ export class TypographyComponent implements OnInit {
         "cod_rol": 2,
         "usuario_agrega": sessionStorage.getItem('username'),
         "usuario_modifica": sessionStorage.getItem('username'),
-        "fecha_ingreso": moment().format('YYYY-MM-DD hh:mm:ss A Z'),
-        "fecha_modifica": moment().format('YYYY-MM-DD hh:mm:ss A Z'),
+        "fecha_ingreso": moment().format('YYYY-MM-DD hh:mm:ss'),
+        "fecha_modifica": moment().format('YYYY-MM-DD hh:mm:ss'),
         "ip_agrega": this.ip,
         "ip_modifica": this.ip,
         "password": usuario.password
@@ -144,5 +159,63 @@ export class TypographyComponent implements OnInit {
     this.puntosRegion = this.puntosAtencion.filter(e => e.region === id);
     console.log('estos son los puntos de atencion de una region ',this.puntosRegion);
   }
+
+  // Metodo para editar usuarios
+  public editar(usuario: any, i: number): void {
+    console.log('this is the value of usuario ', usuario)
+    this.usuarioActualizacionForm.get('emailUsuario').setValue(usuario.email);
+    this.usuarioActualizacionForm.get('cargoUsuario').setValue(usuario.cargo);
+    this.usuarioActualizacionForm.get('estadoUsuario').setValue(usuario.estado);
+    this.usuario = usuario;
+    this.usuario.index = i;
+    console.log(this.usuarioActualizacionForm.value);
+    console.log(this.usuario);
+    console.log(this.usuarios);
+  }
+
+  public actualizarUsuario() {
+    console.log('Usuario ', this.usuarioActualizacionForm.value);
+    console.log('Actualizar!');
+    let enviando = Swal
+    enviando.fire('Enviando...');
+    let dato = {
+      id: this.usuario.id,
+      cui: this.usuario.cui,
+      email: this.usuarioActualizacionForm.get('emailUsuario').value,
+      puntoAtencion: this.puntosAtencion.find(e => e.nombre === this.usuario.punto).id,
+      cod_cargo: this.usuarioActualizacionForm.get('cargoUsuario').value,
+      estado: this.usuarioActualizacionForm.get('estadoUsuario').value,
+      usuarioModifica: sessionStorage.getItem('username'),
+      fechaModifica: moment().format('YYYY-MM-DD hh:mm:ss'),
+      ipModifica: this.ip
+    }
+    console.log(dato);
+
+    this.servicio.updateUsuario(dato)
+      .subscribe(res => {
+        if(res.status === 1) {
+          enviando.close();
+          this.usuarios[this.usuario.index].email = dato.email;
+          this.usuarios[this.usuario.index].cargo = dato.cod_cargo;
+          this.usuarios[this.usuario.index].estado = dato.estado;
+          Swal.fire('Datos actualizados');
+        } else if (res.status === 2) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error al actualizar!',
+            text: res.message
+          })
+        }
+      }, e => {
+        enviando.close();
+        Swal.fire({
+          icon: 'error',
+          title: 'Error en el servidor!',
+          text: 'No se pudo enviar la información'
+        })
+        console.log('Ocurrio un error ', e);
+      })
+  }
+
 
 }

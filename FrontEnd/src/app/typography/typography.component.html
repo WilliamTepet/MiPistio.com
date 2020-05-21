@@ -47,6 +47,12 @@
                                 <td mat-cell *matCellDef="let element"> {{ element.email }} </td>
                               </ng-container>
 
+                              <!-- Puntos de atencion Column -->
+                              <ng-container matColumnDef="punto">
+                                <th mat-header-cell *matHeaderCellDef>Punto de Atención</th>
+                                <td mat-cell *matCellDef="let element"> {{ element.punto }} </td>
+                              </ng-container>
+
                               <!-- Cargo Column -->
                               <ng-container matColumnDef="cargo">
                                 <th mat-header-cell *matHeaderCellDef> Cargo </th>
@@ -79,7 +85,7 @@
             
         </div>
         <div class="row">
-            <!-- Formulario para agregar punto de atención -->
+            <!-- Formulario para agregar usuario -->
           <div class="modal fade" id="formRegistro" tabindex="-1" role="dialog" aria-labelledby="formRegistro" aria-hidden="true">
               <div class="modal-dialog" role="document">
               <div class="modal-content">
@@ -152,8 +158,8 @@
           </div>
         </div>
         <div class="row">
-          <!-- Formulario para actualizar punto de atención -->
-        <!-- <div class="modal fade" id="formActualizacion" tabindex="-1" role="dialog" aria-labelledby="formActualizacion" aria-hidden="true">
+          <!-- Formulario para actualizar usuarios -->
+        <div class="modal fade" id="formActualizacion" tabindex="-1" role="dialog" aria-labelledby="formActualizacion" aria-hidden="true">
             <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -163,35 +169,45 @@
                 </button>
                 </div>
                 <div class="modal-body">
-                    <form [formGroup]="puntoAtencionActualizacionForm">
+                    <form [formGroup]="usuarioActualizacionForm">
                       <div class="form-group">
                           <mat-form-field>
-                              <input required matInput formControlName="nombrePuntoAtencion" [(value)]="punto.nombre"
-                              name="nombrePunto">
+                            <mat-label>Correo electronico</mat-label>
+                            <input required matInput formControlName="emailUsuario" [(value)]="usuario.email" name="emailUsuario">
                           </mat-form-field>
                       </div>
-                      <div class="form-group">
+                      <div>
                         <mat-form-field>
+                          <mat-label>Cargo</mat-label>
+                          <mat-select required formControlName="cargoUsuario" [(value)]="usuario.cargo">
+                            <mat-option *ngFor="let element of cargos" [value]="element.codigo">
+                              {{ element.nombre }}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                      <div>
+                          <mat-form-field>
                             <mat-label>Estado</mat-label>
-                            <mat-select required formControlName="estadoPunto" [(value)]="punto.estado">
-                                <mat-option *ngFor="let estado of estados" [value]="estado.id">
-                                    {{ estado.nombre }}
-                                </mat-option>
+                            <mat-select required formControlName="estadoUsuario">
+                              <mat-option *ngFor="let element of estados" [value]="element.id">
+                                {{ element.nombre }}
+                              </mat-option>
                             </mat-select>
                           </mat-form-field>
-                    </div>
+                      </div>
                   </form>
                   </div>
                 <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">CERRAR</button>
-                <button (click)="actualizarPunto()"
-                      [disabled]="!puntoAtencionActualizacionForm.valid"
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">CANCELAR</button>
+                <button (click)="actualizarUsuario()"
+                      [disabled]="!usuarioActualizacionForm.valid"
                       data-dismiss="modal" 
                       class="btn btn-primary">ACTUALIZAR USUARIO</button>
                 </div>
             </div>
             </div>
-        </div> -->
+        </div>
       </div>
     </div>
   </div>
