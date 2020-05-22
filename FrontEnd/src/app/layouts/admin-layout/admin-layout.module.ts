@@ -25,7 +25,6 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorIntlCro } from 'app/modelos/customClass';
 
 import { RecaptchaModule, RecaptchaFormsModule } from 'ng-recaptcha';
-import { QuejasComponent } from 'app/components/quejas/quejas.component';
 
 @NgModule({
   imports: [
