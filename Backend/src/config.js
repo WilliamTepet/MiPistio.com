@@ -14,7 +14,9 @@ const pool = new Pool(configDB);
 
 const config = {
     port: 3000,
-    secretKey: '6LdC8PgUAAAAAFzCG60Py5Mhs7VoK_W-1JLfIElc'
+    secretKey: '6LdC8PgUAAAAAFzCG60Py5Mhs7VoK_W-1JLfIElc',
+    user: 'mipistioumg@gmail.com',
+    password: 'mipistioumg2020'
 }
 
 module.exports = { config, db, pool }

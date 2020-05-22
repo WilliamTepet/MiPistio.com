@@ -66,15 +66,20 @@
                     <mat-form-field>
                         <mat-label>Oficina Tributaria</mat-label>
                         <mat-select formControlName="oficina">
-                            <mat-option *ngFor="let oficina of oficinas" [value]="oficina.codigo">
-                                {{ oficina.nombre }}
+                            <mat-option *ngFor="let punto of puntos" [value]="punto.estado">
+                                {{ punto.nombre }}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
                 </div>
                 <div class="form-group">
                     <mat-form-field class="">
-                        <input formControlName="empleado" matInput placeholder="Nombre del Empleado o Funcionario">
+                        <mat-label>Empleados</mat-label>
+                        <mat-select formControlName="empleado">
+                          <mat-option *ngFor="let empleado of empleados" [value]="empleado.estado">
+                            {{ empleado.nombre }}
+                          </mat-option>
+                        </mat-select>
                     </mat-form-field>
                 </div>
                 <div class="form-group">
@@ -93,6 +98,12 @@
                 <button (click)="enviarQueja()" data-dismiss="modal" [disabled]="!quejaForm.valid" class="btn btn-primary">ENVIAR QUEJA</button>
             </form>
           </div>
+      </div>
+      <div *ngIf="nueva" class="row">
+        <div class="col-md-12">
+
+          <button class="btn btn-primary" (click)="nuevaQueja()">NUEVA QUEJA</button>
+        </div>
       </div>
   </div>
 
