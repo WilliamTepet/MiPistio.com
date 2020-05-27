@@ -22,6 +22,10 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatPaginatorModule, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorIntlCro } from 'app/modelos/customClass';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+
 
 @NgModule({
   imports: [
@@ -38,7 +42,10 @@ import { MatPaginatorIntlCro } from 'app/modelos/customClass';
     MatTableModule,
     MatSliderModule,
     MatPaginatorModule,
-    MatSortModule
+    MatSortModule,
+    MatDatepickerModule,
+    MatExpansionModule,
+    MatNativeDateModule
   ],
   declarations: [
     DashboardComponent,

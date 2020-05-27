@@ -2,16 +2,12 @@
   <div class="container-fluid">
       <div class="card">
           <div class="card-header card-header-danger">
-              <h3 class="card-title">Notifications</h3>
-              <p class="card-category">Handcrafted by our friend
-                  <a target="_blank" href="https://github.com/mouse0270">Robert McIntosh</a>. Please checkout the
-                  <a href="http://bootstrap-notify.remabledesigns.com/" target="_blank">full documentation.</a>
-              </p>
+              <h3 class="card-title">{{ tipoReporte }}</h3>
           </div>
           <div class="card-body">
               <div class="row">
                   <div class="col-md-6">
-                      <h4 class="card-title">Notifications Style</h4>
+                      <!-- <h4 class="card-title">Notifications Style</h4>
                       <div class="alert alert-info">
                           <span>This is a plain notification</span>
                       </div>
@@ -34,10 +30,10 @@
                               <i class="material-icons">close</i>
                           </button>
                           <span data-notify="message">This is a notification with close button and icon and have many lines. You can see that the icon and the close button are always vertically aligned. This is a beautiful notification. So you don't have to worry about the style.</span>
-                      </div>
+                      </div> -->
                   </div>
                   <div class="col-md-6">
-                      <h4 class="card-title">Notification states</h4>
+                      <!-- <h4 class="card-title">Notification states</h4>
                       <div class="alert alert-info">
                           <button mat-button type="button" class="close" data-dismiss="alert" aria-label="Close">
                               <i class="material-icons">close</i>
@@ -72,13 +68,198 @@
                           </button>
                           <span>
                               <b> Primary - </b> This is a regular notification made with ".alert-primary"</span>
-                      </div>
+                      </div> -->
                   </div>
               </div>
           </div>
-          <div class="col-md-12">
+
+          <div class="col">
               <div class="places-buttons">
-                  <div class="row">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <mat-accordion>
+                                <mat-expansion-panel #panel [expanded]="true">
+                                    <div class="col-lg-7 col-md-12 ml-auto mr-right text-center">
+                                        <mat-expansion-panel-header>
+                                            <mat-panel-title>
+                                                Filtro de busqueda
+                                            </mat-panel-title>
+                                        </mat-expansion-panel-header>
+                                    </div>
+                                    <form [formGroup]="searchForm">
+                                        <div class="col-md-12">
+                                            <div class="row">
+                                                <!-- FECHA DESDE -->
+                                                <div class="col">
+                                                    <mat-form-field>
+                                                        <mat-label>Fecha desde</mat-label>
+                                                        <input matInput [matDatepicker]="fechDes"
+                                                            formControlName="fechaDesde"
+                                                            [min]="minFecha"
+                                                            [max]="maxFecha"
+                                                            (keypress)="filterKey($event)"
+                                                            required
+                                                        />
+                                                        <mat-datepicker-toggle matSuffix [for]="fechDes"></mat-datepicker-toggle>
+                                                        <mat-datepicker #fechDes></mat-datepicker>
+                                                    </mat-form-field>
+                                                </div>
+                                                <!-- FECHA HASTA -->
+                                                <div class="col">
+                                                    <mat-form-field>
+                                                        <mat-label>Fecha hasta</mat-label>
+                                                        <input matInput [matDatepicker]="fechHas"
+                                                            formControlName="fechaHasta"
+                                                            [min]="minFecha"
+                                                            [max]="maxFecha"
+                                                            (keypress)="filterKey($event)"
+                                                            required
+                                                        />
+                                                        <mat-datepicker-toggle matSuffix [for]="fechHas"></mat-datepicker-toggle>
+                                                        <mat-datepicker #fechHas></mat-datepicker>
+                                                    </mat-form-field>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="row">
+                                                <!-- NUMERO QUEJA -->
+                                                <div class="col">
+                                                    <mat-form-field>
+                                                        <mat-label>Numero de queja</mat-label>
+                                                            <input matInput required formControlName="numQueja"
+                                                            placeholder="Ejemplo: 12"/>
+                                                            <!-- <mat-error *ngIf="numQueja.hasError('required')">
+                                                            Numero de queja <strong>requerido</strong>
+                                                            </mat-error> -->
+                                                    </mat-form-field>
+                                                </div>
+                                                <!-- REGIONES -->
+                                                <div class="col">
+                                                    <mat-form-field>
+                                                        <mat-label>Region</mat-label>
+                                                            <mat-select name="region" formControlName="region" #region>
+                                                                <mat-option (click)="getPuntosRegion(region.codigo)" 
+                                                                *ngFor="let region of regiones" 
+                                                                [value]="region.codigo">
+                                                                {{ region.nombre }}
+                                                                </mat-option>
+                                                            </mat-select>
+                                                    </mat-form-field>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="row">
+                                                <!-- PUNTOS DE ATENCION -->
+                                                <div class="col">
+                                                    <mat-form-field>
+                                                        <mat-label>Punto de Atención</mat-label>
+                                                            <mat-select formControlName="puntoAtencion">
+                                                                <mat-option *ngFor="let punto of puntosRegion" [value]="punto.id">
+                                                                    {{ punto.nombre }}
+                                                                </mat-option>
+                                                            </mat-select>
+                                                            <!-- <input matInput required formControlName="puntoAtencion"/> -->
+                                                            <!-- <mat-error *ngIf="numQueja.hasError('required')">
+                                                            Numero de queja <strong>requerido</strong>
+                                                            </mat-error> -->
+                                                    </mat-form-field>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="row">
+                                                <!-- ACCIONES -->
+                                                <div class="col-md-6">
+                                                    <button style="margin: auto;" class="col-md-12 btn bg-red-pistio btn-fill">LIMPIAR FILTRO</button>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <button style="margin: auto;" class="col-md-12 btn bg-blue-pistio btn-fill"
+                                                    [disabled]="searchForm.invalid"
+                                                    >BUSCAR</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </mat-expansion-panel>
+                            </mat-accordion>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div [hidden]="showReporte" class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <mat-card>
+                                        <mat-card-header>
+                                            <h2 class="center">{{ tipoReporte | uppercase }}</h2>
+                                        </mat-card-header>
+                                        <mat-card-content class="top">
+                                            <div class="mat-elevation-z8 barra-horizontal">
+                                                <table mat-table style="width: 100%;" matSort [dataSource]="dataSource">
+                                                    <!-- NUMERO DE QUEJA -->
+                                                    <ng-container matColumnDef="numqueja">
+                                                        <th class="header" mat-header-cell *matHeaderCellDef mat-sort-header> NUMERO DE QUEJA </th>
+                                                        <td mat-cell > hola </td>
+                                                    </ng-container>
+                                                    <!-- TIPO DE QUEJA -->
+                                                    <ng-container matColumnDef="tipoqueja">
+                                                        <th class="header" mat-header-cell *matHeaderCellDef mat-sort-header> TIPO DE QUEJA </th>
+                                                        <td mat-cell > hola </td>
+                                                    </ng-container>
+                                                    <!-- PUNTO DE ATENCION -->
+                                                    <ng-container matColumnDef="puntoatencion">
+                                                        <th class="header" mat-header-cell *matHeaderCellDef mat-sort-header> PUNTO DE ATENCION </th>
+                                                        <td mat-cell > hola </td>
+                                                    </ng-container>
+                                                    <!-- ESTADO -->
+                                                    <ng-container matColumnDef="estado">
+                                                        <th class="header" mat-header-cell *matHeaderCellDef mat-sort-header> ESTADO </th>
+                                                        <td mat-cell > hola </td>
+                                                    </ng-container>
+                                                    <!-- ETAPA -->
+                                                    <ng-container matColumnDef="etapa">
+                                                        <th class="header" mat-header-cell *matHeaderCellDef mat-sort-header> ETAPA </th>
+                                                        <td mat-cell > hola </td>
+                                                    </ng-container>
+                                                    <!-- RESULTADO -->
+                                                    <ng-container matColumnDef="resultado">
+                                                        <th class="header" mat-header-cell *matHeaderCellDef mat-sort-header> RESULTADO </th>
+                                                        <td mat-cell > hola </td>
+                                                    </ng-container>
+                                                    <!-- MEDIO DE INGRESO -->
+                                                    <ng-container matColumnDef="medioingreso">
+                                                        <th class="header" mat-header-cell *matHeaderCellDef mat-sort-header> MEDIO DE INGRESO </th>
+                                                        <td mat-cell > hola </td>
+                                                    </ng-container>
+                                                    <!-- FECHA DE CREACION -->
+                                                    <ng-container matColumnDef="fechacreacion">
+                                                        <th class="header" mat-header-cell *matHeaderCellDef mat-sort-header> FECHA DE CREACION </th>
+                                                        <td mat-cell > hola </td>
+                                                    </ng-container>
+                                                    <!-- TIEMPO DE ATENCION -->
+                                                    <ng-container matColumnDef="tiempoatencion">
+                                                        <th class="header" mat-header-cell *matHeaderCellDef mat-sort-header> TIEMPO DE ATENCION </th>
+                                                        <td mat-cell > hola </td>
+                                                    </ng-container>
+                                                    <!-- DETALLE -->
+                                                    <ng-container matColumnDef="detalle">
+                                                        <th class="header" mat-header-cell *matHeaderCellDef mat-sort-header> DETALLE </th>
+                                                        <td mat-cell > hola </td>
+                                                    </ng-container>
+                                                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                                                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                                                </table>
+                                            </div>
+                                        </mat-card-content>                 
+                                    </mat-card>
+                                </div>
+                            </div>    
+                        </div>
+                    </div>
+ 
+                  <!-- <div class="row">
                       <div class="col-md-6 ml-auto mr-auto text-center">
                           <h4 class="card-title">
                               Notifications Places
@@ -115,7 +296,8 @@
                               </div>
                           </div>
                       </div>
-                  </div>
+                  </div> -->
+
               </div>
           </div>
       </div>

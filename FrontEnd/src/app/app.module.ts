@@ -6,6 +6,10 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import {MatTableModule} from '@angular/material/table';
 
+// import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+
 import { AppRoutingModule } from './app.routing';
 import { ComponentsModule } from './components/components.module';
 
@@ -30,7 +34,7 @@ import { Interceptor } from './http-interceptors/interceptor';
 
 @NgModule({
   exports: [
-    
+
   ],
   imports: [
     BrowserAnimationsModule,
@@ -51,8 +55,7 @@ import { Interceptor } from './http-interceptors/interceptor';
   declarations: [
     AppComponent,
     AdminLayoutComponent,
-    LoginComponent,
-
+    LoginComponent
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS, useClass: Interceptor, multi: true
