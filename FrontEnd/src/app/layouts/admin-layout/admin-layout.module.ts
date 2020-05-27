@@ -8,6 +8,7 @@ import { UserProfileComponent } from '../../user-profile/user-profile.component'
 import { TableListComponent } from '../../table-list/table-list.component';
 import { TypographyComponent } from '../../typography/typography.component';
 import { IconsComponent } from '../../icons/icons.component';
+import { QuejasComponent } from '../../quejas/quejas.component';
 import { MapsComponent } from '../../maps/maps.component';
 import { NotificationsComponent } from '../../notifications/notifications.component';
 import { UpgradeComponent } from '../../upgrade/upgrade.component';
@@ -27,6 +28,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 
 
+import { RecaptchaModule, RecaptchaFormsModule } from 'ng-recaptcha';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -45,7 +48,8 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatSortModule,
     MatDatepickerModule,
     MatExpansionModule,
-    MatNativeDateModule
+    RecaptchaModule,
+    RecaptchaFormsModule
   ],
   declarations: [
     DashboardComponent,
@@ -56,6 +60,7 @@ import { MatNativeDateModule } from '@angular/material/core';
     MapsComponent,
     NotificationsComponent,
     UpgradeComponent,
+    QuejasComponent
   ],
   providers: [{ provide: MatPaginatorIntl, useClass: MatPaginatorIntlCro }]
 })

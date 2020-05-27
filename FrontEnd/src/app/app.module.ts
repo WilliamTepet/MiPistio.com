@@ -15,29 +15,31 @@ import { ComponentsModule } from './components/components.module';
 
 import { AppComponent } from './app.component';
 
-import { RecaptchaModule, RecaptchaFormsModule } from 'ng-recaptcha';
+import { CommonModule } from '@angular/common';
 
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { UserProfileComponent } from './user-profile/user-profile.component';
-import { TableListComponent } from './table-list/table-list.component';
-import { TypographyComponent } from './typography/typography.component';
-import { IconsComponent } from './icons/icons.component';
-import { MapsComponent } from './maps/maps.component';
-import { NotificationsComponent } from './notifications/notifications.component';
-import { UpgradeComponent } from './upgrade/upgrade.component';
 import {
   AgmCoreModule
 } from '@agm/core';
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 import { LoginComponent } from './login/login.component';
 import { Interceptor } from './http-interceptors/interceptor';
+import { PortalComponent } from './portal/portal.component';
+import { QuejasDenunciasComponent } from './quejas-denuncias/quejas-denuncias.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { RecaptchaModule, RecaptchaFormsModule } from 'ng-recaptcha';
 
 @NgModule({
   exports: [
 
   ],
+
+
   imports: [
     BrowserAnimationsModule,
+    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     HttpModule,
@@ -46,16 +48,23 @@ import { Interceptor } from './http-interceptors/interceptor';
     RouterModule,
     AppRoutingModule,
     MatTableModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    RecaptchaModule,
+    RecaptchaFormsModule,
     AgmCoreModule.forRoot({
       apiKey: 'YOUR_GOOGLE_MAPS_API_KEY'
-    }),
-    RecaptchaModule,
-    RecaptchaFormsModule
+    })
   ],
   declarations: [
     AppComponent,
     AdminLayoutComponent,
-    LoginComponent
+    LoginComponent,
+    PortalComponent,
+    QuejasDenunciasComponent,
+
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS, useClass: Interceptor, multi: true

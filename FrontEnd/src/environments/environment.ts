@@ -5,5 +5,6 @@
 
 export const environment = {
   production: false,
-  BASE_URL: 'http://localhost:3000'
+  BASE_URL: 'http://localhost:3000',
+  site_key: '6LdC8PgUAAAAAO4BubR37VohriRoSS1DmlimeanY'
 };

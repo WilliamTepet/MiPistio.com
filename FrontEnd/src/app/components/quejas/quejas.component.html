@@ -1,0 +1,25 @@
+<div class="main-content">
+    <div class="container-fluid">
+      <div class="card">
+          <div class="card-header card-header-danger">
+              <h4 class="card-title">Material Dashboard Heading</h4>
+              <p class="card-category">Created using Roboto Font Family</p>
+          </div>
+          <div class="card-body">
+              <div id="typography">
+                  <div class="card-title">
+                      <h2>Quejas</h2>
+                  </div>
+                  <div class="row">
+                      <div>
+                          <form [formGroup]="reactiveForm">
+                              <re-captcha (resolved)="resolved($event)" siteKey="{{siteKey}}" formControlName="recaptchaReactive"></re-captcha>
+                              <!-- <button [disabled]="reactiveForm.invalid">Submit</button> -->
+                          </form>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+  

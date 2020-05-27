@@ -5,6 +5,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import Swal from 'sweetalert2'
 import { FormGroup, FormControl, Validators, NgForm } from '@angular/forms';
 import { PuntoAtencion } from '../modelos/PuntoAtencionModelo';
+import { environment } from '../../environments/environment';
 
 import * as moment from 'moment';
 import 'datatables.net';
@@ -59,7 +60,13 @@ export class TableListComponent implements OnInit {
       nombrePuntoAtencion: new FormControl({ value: '' }, Validators.required),
       estadoPunto: new FormControl({ value: '' }, Validators.required)
     });
+
+    /* this.reactiveForm = new FormGroup({
+      recaptchaReactive: new FormControl(null, Validators.required)
+    }); */
   }
+
+  siteKey: string = environment.site_key;
 
   displayedColumns: string[] = ['id', 'region', 'nombre', 'estado', 'acciones'];
   dataSource: MatTableDataSource<any> = new MatTableDataSource;
@@ -90,6 +97,7 @@ export class TableListComponent implements OnInit {
 
   puntoAtencionForm: FormGroup;
   puntoAtencionActualizacionForm: FormGroup;
+  // reactiveForm: FormGroup;
   ip: string;
 
   catalogos: any = [];
@@ -146,6 +154,7 @@ export class TableListComponent implements OnInit {
     }
 
     await this.servicio.postPuntoAtencion(dato).toPromise().then(res => {
+      console.log(res.status);
       if (res.status) {
         Swal.fire(`Se guardaron correctamente los datos del punto de atención ${nuevoPunto.id} - ${nuevoPunto.nombre}`);
 

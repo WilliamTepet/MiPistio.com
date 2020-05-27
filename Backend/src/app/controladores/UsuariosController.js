@@ -26,7 +26,7 @@ router.post('/agregar', async (req, res)=>{
         const usuario =  await verificarUsuario(datos.cui, datos.email);
         const rol = await verificarRolUsuario(login.user, login.password);
         console.log ('validar codigo', datos.codigo, usuario.usuarioExiste, usuario.cargoJefe);
-        userExiste = false;
+        let userExiste = false;
         if (usuario.usuarioExiste){
             const cargo = await verificarCargoUsuario (datos.cui);
             console.log ('obteniendo cargo',cargo.cargoNoJefe);
@@ -88,7 +88,7 @@ router.put('/actualizar/:id', async (req, res)=>{
             const cargo = await verificarCargoUsuarioId(usuarioId);
             const cuiUsuario =  await verificarCui(datos.cui);
             const emailUsuario = await verificarEmail(datos.email);
-            valCargo = false;
+            let valCargo = false;
             //validacion para condiciones de actualización de cargo
             if (cargo.cargoNoJefe && datos.cod_cargo != cod_rol_jefe && (datos.puntoAtencion != cargo.codPtoAtencion)){
                     valCargo = true;

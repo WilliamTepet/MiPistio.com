@@ -1,0 +1,36 @@
+.right  {
+    margin: 0 0 0 auto;
+}
+.padding-top {
+    padding-top: 50px;
+}
+.whitout-margin-bottom {
+    margin-bottom: 0;
+}
+.bg-slider img {
+    max-height: 90vh;
+}
+ol.carousel-indicators li {
+    width: 5%;
+}
+
+.carousel-caption h5 {
+    font-size: 4em;
+    margin-bottom: 30px;
+}
+.carousel-caption p {
+    font-size: 2em;
+}
+
+.carousel-caption {
+    bottom: 50px;
+    text-shadow: 1px 1px #3b8809;
+}
+
+.footer {
+    filter: invert(100%);
+    margin-top: 20px;
+    position: relative;
+    width: 100%;
+    bottom: 0;
+}
