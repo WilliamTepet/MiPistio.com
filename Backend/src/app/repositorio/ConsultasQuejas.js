@@ -52,7 +52,7 @@ const getLastQueja = async () => { //Query para obtener última queja agregada
 const getQueja= async () => { //Query para listar todas las quejas creadas
     try {
         const query = `select Q.codigo, Q.nombre_cliente, Q.email, Q.telefono, Q.punto_atencion, Q.nombre_empleado, Q.descripcion, Q.usuario_agrega,
-        QD.cod_estado_externo, QD.cod_estado_interno, QD.cod_medio_ingreso, QD.cod_tipo_ingreso
+        Q.fecha_ingreso, Q.fecha_modifica, QD.cod_estado_externo, QD.cod_estado_interno, QD.cod_medio_ingreso, QD.cod_tipo_ingreso
         from mipistio_catalogo.queja Q
         join mipistio_catalogo.queja_dato QD on QD.cod_queja = Q.id_queja
         join mipistio_catalogo.queja_usuario QU on QU.cod_queja = Q.id_queja`;

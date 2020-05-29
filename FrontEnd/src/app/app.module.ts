@@ -9,6 +9,7 @@ import {MatTableModule} from '@angular/material/table';
 // import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core/';
 
 import { AppRoutingModule } from './app.routing';
 import { ComponentsModule } from './components/components.module';
@@ -33,7 +34,8 @@ import { RecaptchaModule, RecaptchaFormsModule } from 'ng-recaptcha';
 
 @NgModule({
   exports: [
-
+    MatExpansionModule,
+    MatDatepickerModule
   ],
 
 
@@ -56,7 +58,10 @@ import { RecaptchaModule, RecaptchaFormsModule } from 'ng-recaptcha';
     RecaptchaFormsModule,
     AgmCoreModule.forRoot({
       apiKey: 'YOUR_GOOGLE_MAPS_API_KEY'
-    })
+    }),
+    MatExpansionModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   declarations: [
     AppComponent,

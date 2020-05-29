@@ -4,74 +4,7 @@
           <div class="card-header card-header-danger">
               <h3 class="card-title">{{ tipoReporte }}</h3>
           </div>
-          <div class="card-body">
-              <div class="row">
-                  <div class="col-md-6">
-                      <!-- <h4 class="card-title">Notifications Style</h4>
-                      <div class="alert alert-info">
-                          <span>This is a plain notification</span>
-                      </div>
-                      <div class="alert alert-info">
-                          <button mat-button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                              <i class="material-icons">close</i>
-                          </button>
-                          <span>This is a notification with close button.</span>
-                      </div>
-                      <div class="alert alert-info alert-with-icon" data-notify="container">
-                          <i class="material-icons" data-notify="icon">add_alert</i>
-                          <button mat-button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                              <i class="material-icons">close</i>
-                          </button>
-                          <span data-notify="message">This is a notification with close button and icon.</span>
-                      </div>
-                      <div class="alert alert-info alert-with-icon" data-notify="container">
-                          <i class="material-icons" data-notify="icon">add_alert</i>
-                          <button mat-button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                              <i class="material-icons">close</i>
-                          </button>
-                          <span data-notify="message">This is a notification with close button and icon and have many lines. You can see that the icon and the close button are always vertically aligned. This is a beautiful notification. So you don't have to worry about the style.</span>
-                      </div> -->
-                  </div>
-                  <div class="col-md-6">
-                      <!-- <h4 class="card-title">Notification states</h4>
-                      <div class="alert alert-info">
-                          <button mat-button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                              <i class="material-icons">close</i>
-                          </button>
-                          <span>
-                              <b> Info - </b> This is a regular notification made with ".alert-info"</span>
-                      </div>
-                      <div class="alert alert-success">
-                          <button mat-button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                              <i class="material-icons">close</i>
-                          </button>
-                          <span>
-                              <b> Success - </b> This is a regular notification made with ".alert-success"</span>
-                      </div>
-                      <div class="alert alert-warning">
-                          <button mat-button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                              <i class="material-icons">close</i>
-                          </button>
-                          <span>
-                              <b> Warning - </b> This is a regular notification made with ".alert-warning"</span>
-                      </div>
-                      <div class="alert alert-danger">
-                          <button mat-button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                              <i class="material-icons">close</i>
-                          </button>
-                          <span>
-                              <b> Danger - </b> This is a regular notification made with ".alert-danger"</span>
-                      </div>
-                      <div class="alert alert-primary">
-                          <button mat-button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                              <i class="material-icons">close</i>
-                          </button>
-                          <span>
-                              <b> Primary - </b> This is a regular notification made with ".alert-primary"</span>
-                      </div> -->
-                  </div>
-              </div>
-          </div>
+          <div class="card-body"></div>
 
           <div class="col">
               <div class="places-buttons">
@@ -172,11 +105,15 @@
                                             <div class="row">
                                                 <!-- ACCIONES -->
                                                 <div class="col-md-6">
-                                                    <button style="margin: auto;" class="col-md-12 btn bg-red-pistio btn-fill">LIMPIAR FILTRO</button>
+                                                    <button style="margin: auto;"
+                                                        class="col-md-12 btn bg-red-pistio btn-fill"
+                                                    >LIMPIAR FILTRO</button>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <button style="margin: auto;" class="col-md-12 btn bg-blue-pistio btn-fill"
-                                                    [disabled]="searchForm.invalid"
+                                                    <button style="margin: auto;"
+                                                        class="col-md-12 btn bg-blue-pistio btn-fill"
+                                                        [disabled]="searchForm.invalid"
+                                                        (click)="panel.close()"
                                                     >BUSCAR</button>
                                                 </div>
                                             </div>
@@ -187,11 +124,13 @@
                         </div>
                     </div>
                     
+                    
                     <div class="card">
                         <div [hidden]="showReporte" class="col-md-12">
                             <div class="row">
                                 <div class="col-md-12">
                                     <mat-card>
+                                        <div class="card-body"></div>
                                         <mat-card-header>
                                             <h2 class="center">{{ tipoReporte | uppercase }}</h2>
                                         </mat-card-header>
@@ -200,53 +139,53 @@
                                                 <table mat-table style="width: 100%;" matSort [dataSource]="dataSource">
                                                     <!-- NUMERO DE QUEJA -->
                                                     <ng-container matColumnDef="numqueja">
-                                                        <th class="header" mat-header-cell *matHeaderCellDef mat-sort-header> NUMERO DE QUEJA </th>
-                                                        <td mat-cell > hola </td>
+                                                        <th class="header" mat-header-cell *matHeaderCellDef> NUMERO DE QUEJA </th>
+                                                        <td mat-cell *matCellDef="let element"> {{ element.numqueja }} </td>
                                                     </ng-container>
                                                     <!-- TIPO DE QUEJA -->
                                                     <ng-container matColumnDef="tipoqueja">
-                                                        <th class="header" mat-header-cell *matHeaderCellDef mat-sort-header> TIPO DE QUEJA </th>
-                                                        <td mat-cell > hola </td>
+                                                        <th class="header" mat-header-cell *matHeaderCellDef> TIPO DE QUEJA </th>
+                                                        <td mat-cell *matCellDef="let element"> {{ element.tipoqueja }} </td>
                                                     </ng-container>
                                                     <!-- PUNTO DE ATENCION -->
                                                     <ng-container matColumnDef="puntoatencion">
-                                                        <th class="header" mat-header-cell *matHeaderCellDef mat-sort-header> PUNTO DE ATENCION </th>
-                                                        <td mat-cell > hola </td>
+                                                        <th class="header" mat-header-cell *matHeaderCellDef> PUNTO DE ATENCION </th>
+                                                        <td mat-cell *matCellDef="let element"> {{ element.puntoatencion }} </td>
                                                     </ng-container>
                                                     <!-- ESTADO -->
                                                     <ng-container matColumnDef="estado">
-                                                        <th class="header" mat-header-cell *matHeaderCellDef mat-sort-header> ESTADO </th>
-                                                        <td mat-cell > hola </td>
+                                                        <th class="header" mat-header-cell *matHeaderCellDef> ESTADO </th>
+                                                        <td mat-cell *matCellDef="let element"> {{ element.estado }} </td>
                                                     </ng-container>
                                                     <!-- ETAPA -->
                                                     <ng-container matColumnDef="etapa">
-                                                        <th class="header" mat-header-cell *matHeaderCellDef mat-sort-header> ETAPA </th>
-                                                        <td mat-cell > hola </td>
+                                                        <th class="header" mat-header-cell *matHeaderCellDef> ETAPA </th>
+                                                        <td mat-cell *matCellDef="let element"> {{ element.etapa}} </td>
                                                     </ng-container>
                                                     <!-- RESULTADO -->
                                                     <ng-container matColumnDef="resultado">
-                                                        <th class="header" mat-header-cell *matHeaderCellDef mat-sort-header> RESULTADO </th>
-                                                        <td mat-cell > hola </td>
+                                                        <th class="header" mat-header-cell *matHeaderCellDef> RESULTADO </th>
+                                                        <td mat-cell *matCellDef="let element"> {{ element.resultado}} </td>
                                                     </ng-container>
                                                     <!-- MEDIO DE INGRESO -->
                                                     <ng-container matColumnDef="medioingreso">
-                                                        <th class="header" mat-header-cell *matHeaderCellDef mat-sort-header> MEDIO DE INGRESO </th>
-                                                        <td mat-cell > hola </td>
+                                                        <th class="header" mat-header-cell *matHeaderCellDef> MEDIO DE INGRESO </th>
+                                                        <td mat-cell *matCellDef="let element"> {{ element.medioingreso }} </td>
                                                     </ng-container>
                                                     <!-- FECHA DE CREACION -->
                                                     <ng-container matColumnDef="fechacreacion">
-                                                        <th class="header" mat-header-cell *matHeaderCellDef mat-sort-header> FECHA DE CREACION </th>
-                                                        <td mat-cell > hola </td>
+                                                        <th class="header" mat-header-cell *matHeaderCellDef> FECHA DE CREACION </th>
+                                                        <td mat-cell *matCellDef="let element"> {{ element.fechacreacion }} </td>
                                                     </ng-container>
                                                     <!-- TIEMPO DE ATENCION -->
                                                     <ng-container matColumnDef="tiempoatencion">
-                                                        <th class="header" mat-header-cell *matHeaderCellDef mat-sort-header> TIEMPO DE ATENCION </th>
-                                                        <td mat-cell > hola </td>
+                                                        <th class="header" mat-header-cell *matHeaderCellDef> TIEMPO DE ATENCION </th>
+                                                        <td mat-cell *matCellDef="let element"> {{ element.tiempoatencion }} </td>
                                                     </ng-container>
                                                     <!-- DETALLE -->
                                                     <ng-container matColumnDef="detalle">
-                                                        <th class="header" mat-header-cell *matHeaderCellDef mat-sort-header> DETALLE </th>
-                                                        <td mat-cell > hola </td>
+                                                        <th class="header" mat-header-cell *matHeaderCellDef> DETALLE </th>
+                                                        <td mat-cell *matCellDef="let element"> {{ element.detalle }} </td>
                                                     </ng-container>
                                                     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                                                     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
@@ -254,10 +193,13 @@
                                             </div>
                                         </mat-card-content>                 
                                     </mat-card>
+                                    <div class="card-body"></div>
                                 </div>
                             </div>    
                         </div>
                     </div>
+
+                    
  
                   <!-- <div class="row">
                       <div class="col-md-6 ml-auto mr-auto text-center">

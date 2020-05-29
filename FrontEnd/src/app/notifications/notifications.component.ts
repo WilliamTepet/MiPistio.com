@@ -32,8 +32,6 @@ export class NotificationsComponent implements OnInit {
     'tiempoatencion',
     'detalle'
   ];
-
-  reporteForm: FormGroup;
   dataSource: MatTableDataSource<any> = new MatTableDataSource;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -45,17 +43,10 @@ export class NotificationsComponent implements OnInit {
 
   fechaDesde = new FormControl(moment(), Validators.required);
   fechaHasta = new FormControl(moment(), Validators.required);
-  numQueja: any;
-  puntoAtencion: string;
-  listadoPuntAtencion: any [];
-  listadoRegiones: any [];
-
-
   maxFecha = new Date();
   minFecha = new Date(2000, 0, 1);
-  lsRegiones = [];
-  lsPersonas = [];
-  lsUsuarios = [];
+
+  quejas: any[] = [];
   puntosAtencion: any = [];
   regiones: any = [
     { codigo: 1, nombre: 'Central' },
@@ -63,10 +54,27 @@ export class NotificationsComponent implements OnInit {
     { codigo: 3, nombre: 'Occidente' },
     { codigo: 4, nombre: 'Nororiente' }
   ];
+  medios_ingreso: any = [
+    { codigo: 26, nombre: 'Telefono' },
+    { codigo: 27, nombre: 'Correo' },
+    { codigo: 28, nombre: 'Chat' },
+    { codigo: 29, nombre: 'Presencial' },
+    { codigo: 30, nombre: 'Movil' }
+  ];
+  esInternoQuejas: any = [
+    { codigo: 36, nombre: 'Presentada' },
+    { codigo: 37, nombre: 'Analisis' }
+  ];
+  esExternoQuejas: any = [
+    { codigo: 34, nombre: 'Presentada' },
+    { codigo: 35, nombre: 'En Analisis' }
+  ];
   puntosRegion: any = [];
+
 
   fechaActual = new Date();
 
+  estado = false;
   showError = false;
   mensajeError = '';
 
@@ -82,43 +90,74 @@ export class NotificationsComponent implements OnInit {
       puntoAtencion: new FormControl('', Validators.required)
     });
    }
-   
-  showNotification(from, align){
-      const type = ['','info','success','warning','danger'];
 
-      const color = Math.floor((Math.random() * 4) + 1);
 
-      $.notify({
-          icon: "notifications",
-          message: "Welcome to <b>Material Dashboard</b> - a beautiful freebie for every web developer."
-
-      },{
-          type: type[color],
-          timer: 4000,
-          placement: {
-              from: from,
-              align: align
-          },
-          template: '<div data-notify="container" class="col-xl-4 col-lg-4 col-11 col-sm-4 col-md-4 alert alert-{0} alert-with-icon" role="alert">' +
-            '<button mat-button  type="button" aria-hidden="true" class="close mat-button" data-notify="dismiss">  <i class="material-icons">close</i></button>' +
-            '<i class="material-icons" data-notify="icon">notifications</i> ' +
-            '<span data-notify="title">{1}</span> ' +
-            '<span data-notify="message">{2}</span>' +
-            '<div class="progress" data-notify="progressbar">' +
-              '<div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
-            '</div>' +
-            '<a href="{3}" target="{4}" data-notify="url"></a>' +
-          '</div>'
-      });
-  }
   async ngOnInit() {
+
+    // Metodo para obtener puntos
     await this.servicio.getPuntos().toPromise().then(res => {
       res.forEach(element => {
-        let punto = { id: element.id_punto_atencion, nombre: element.nombre, region: element.region, estado: element.estado };
+        let punto = { 
+          id: element.id_punto_atencion,
+          nombre: element.nombre,
+          region: element.region,
+          estado: element.estado
+        };
         this.puntosAtencion.push(punto);
       });
       console.log('Puntos de atencion ', this.puntosAtencion);
     }).catch(e => console.log('Ocurrio un error ', e))
+
+    // Metodo para obtener quejas
+    await this.servicio.getQueja().toPromise().then(res => {
+      res.forEach((element, i = 0) => {
+        i++;
+        let queja = {
+          numqueja: i,
+          tipoqueja: element.codigo,
+          puntoatencion: element.punto_atencion,
+          estado: element.cod_estado_interno,
+          etapa: element.cod_estado_externo,
+          resultado: 'pendiente',
+          medioingreso: element.cod_medio_ingreso,
+          fechacreacion: moment(element.fecha_ingreso).format('DD/MM/YYYY'),
+          tiempoatencion: 'pendiente',
+          detalle: 'ver',
+        };
+        this.quejas.push(queja);
+      });
+      console.log('Listado de Quejas ', this.quejas);
+      this.dataSource = new MatTableDataSource(this.quejas);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+
+    }).catch(e => console.log('Ocurrio un error ', e))
+  }
+
+  public async generarReporte() {
+
+    console.log('Validacion de los filtros ', this.searchForm.value);
+
+    if (!this.searchForm.valid) {return 0};
+    
+    this.estado = true;
+
+    // Objeto con los valores de busqueda
+    const params = {
+      fdesde: moment(this.searchForm.get('fechaDesde').value).format('DD/MM/YYYY'),
+      fhasta: moment(this.searchForm.get('fechaHasta').value).format('DD/MM/YYYY'),
+      nqueja: this.searchForm.get('numQueja').value,
+      region: this.returnValue(this.searchForm.get('region').value),
+      patencion: this.returnValue(this.searchForm.get('puntoAtencion').value)
+    }
+
+    
+
+    // Metodo para extraer datos obtenido de quejas
+    
+
+    
+
   }
 
   public getPuntosRegion(id: number): void {
@@ -144,6 +183,14 @@ export class NotificationsComponent implements OnInit {
 
   public refrescarBusqueda() {
     return
+  }
+
+  public returnValue(dato: string) {
+    if (dato === 'TODOS' || dato === '' || dato === null) {
+      return null
+    }
+
+    return dato.toUpperCase()
   }
 
 }
