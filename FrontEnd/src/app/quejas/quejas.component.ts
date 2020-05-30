@@ -54,6 +54,8 @@ export interface PeriodicElement {
 })
 export class QuejasComponent implements OnInit {
   quejasForm: FormGroup;
+  quejasActualizacionForm: FormGroup;
+
   constructor(private servicio: ServicioService) { 
     this.quejasForm = new FormGroup({
       nombreCliente: new FormControl('', Validators.required),
@@ -65,15 +67,19 @@ export class QuejasComponent implements OnInit {
       descripcion: new FormControl('', Validators.required)
     });
 
-    /*
-    puntoAtencionActualizacionForm: FormGroup;
-    this.puntoAtencionActualizacionForm = new FormGroup({
-      nombrePuntoAtencion: new FormControl({ value: '' }, Validators.required),
-      estadoPunto: new FormControl({ value: '' }, Validators.required)
-    });*/
+    this.quejasActualizacionForm = new FormGroup({
+      nombreCliente: new FormControl('', Validators.required),
+      email: new FormControl('', Validators.required),
+      telefono: new FormControl('', Validators.required),
+      puntoAtencion: new FormControl('', Validators.required),
+      empleado: new FormControl('', Validators.required),
+      medio_ingreso: new FormControl('', Validators.required),
+      descripcion: new FormControl('', Validators.required)
+    });
+
   }
   
-  displayedColumns: string[] = ['codigo','cliente', 'correo', 'telefono', 'puntoAtencion', 'empleado',/*'medio_ingreso',*/'descripcion',/*'estado'*/];
+  displayedColumns: string[] = ['codigo','cliente', 'correo', 'telefono', 'puntoAtencion', 'empleado',/*'medio_ingreso',*/'descripcion','acciones'];
   dataSource: MatTableDataSource<any> = new MatTableDataSource;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -118,9 +124,9 @@ export class QuejasComponent implements OnInit {
       //Componente para obtener quejas
     await this.servicio.getQueja().toPromise().then(res => {
       res.forEach(element => {
-        let queja = { codigo: element.codigo, cliente: element.nombre_cliente, correo: element.email, 
+        let queja = { id: element.id_queja, codigo: element.codigo, cliente: element.nombre_cliente, correo: element.email, 
           telefono: element.telefono, puntoAtencion: element.punto_atencion, empleado: element.nombre_empleado, 
-          /*medio_ingreso: element.cod_medio_ingreso,*/ descripcion: element.descripcion };
+          medio_ingreso: element.cod_medio_ingreso, descripcion: element.descripcion };
         this.quejas.push(queja);
       });
       console.log('Listado de Quejas ', this.quejas);
@@ -261,39 +267,59 @@ export class QuejasComponent implements OnInit {
   public getEstado(id: number): string {
     let estado = this.estados.find(e => e.id === id).nombre;
     return estado;
+  }*/
+
+  //Metodo para editar quejas
+  public editar(queja: any, i: number): void {
+    console.log("valor de queja",queja);
+    this.quejasActualizacionForm.get('nombreCliente').setValue(queja.cliente);
+    this.quejasActualizacionForm.get('email').setValue(queja.correo);
+    this.quejasActualizacionForm.get('telefono').setValue(queja.telefono);
+    this.quejasActualizacionForm.get('puntoAtencion').setValue(queja.puntoAtencion);
+    this.quejasActualizacionForm.get('empleado').setValue(queja.empleado);
+    this.quejasActualizacionForm.get('medio_ingreso').setValue(queja.medio_ingreso);
+    this.quejasActualizacionForm.get('descripcion').setValue(queja.descripcion);
+    this.queja = queja;
+    this.queja.index = i;
+    console.log(this.quejasActualizacionForm.value);
+    console.log(this.queja);
+    console.log(this.quejas);
   }
 
-  public editar(punto: any, i: number): void {
-    console.log(punto);
-    this.puntoAtencionActualizacionForm.get('nombrePuntoAtencion').setValue(punto.nombre);
-    this.puntoAtencionActualizacionForm.get('estadoPunto').setValue(punto.estado);
-    this.punto = punto;
-    this.punto.index = i;
-    console.log(this.puntoAtencionActualizacionForm.value);
-    console.log(this.punto);
-  }
-
-  public actualizarPunto() {
-    console.log('Punto ', this.puntoAtencionActualizacionForm.value);
+  public actualizarQueja() {
+    console.log('Queja ', this.quejasActualizacionForm.value);
     console.log('Actualizar!');
     let enviando = Swal
     enviando.fire('Enviando...');
     let dato = {
-      id: this.punto.id,
-      nombre: this.puntoAtencionActualizacionForm.get('nombrePuntoAtencion').value,
-      estado: this.puntoAtencionActualizacionForm.get('estadoPunto').value,
-      usuarioModifica: sessionStorage.getItem('username'),
-      fechaModifica: moment().format('YYYY-MM-DD hh:mm:ss A Z'),
-      ipModifica: this.ip
+      id: this.queja.id,
+      nombre_cliente: this.quejasActualizacionForm.get('nombreCliente').value,
+      email: this.quejasActualizacionForm.get('email').value,
+      telefono: this.quejasActualizacionForm.get('telefono').value,
+      punto_atencion: this.quejasActualizacionForm.get('puntoAtencion').value,
+      nombre_empleado: this.quejasActualizacionForm.get('empleado').value,
+      cod_medio_ingreso: this.quejasActualizacionForm.get('medio_ingreso').value,
+      descripcion: this.quejasActualizacionForm.get('descripcion').value,
+      cod_estado_externo: 34,
+      cod_estado_interno: 36,
+      cod_tipo_ingreso: 38,
+      archivo:'',
+      usuario_modifica: 'Filberto 2',
+      fecha_modifica: moment().format('YYYY-MM-DD hh:mm:ss A Z')
     }
     console.log(dato);
 
-    this.servicio.updatePunto(dato)
+    this.servicio.updateQueja(dato)
       .subscribe(res => {
         if(res.status === 1) {
           enviando.close();
-          this.puntosAtencion[this.punto.index].nombre = dato.nombre;
-          this.puntosAtencion[this.punto.index].estado = dato.estado;
+          this.quejas[this.queja.index].cliente = dato.nombre_cliente;
+          this.quejas[this.queja.index].correo = dato.email;
+          this.quejas[this.queja.index].telefono = dato.telefono;
+          this.quejas[this.queja.index].puntoAtencion = dato.punto_atencion;
+          this.quejas[this.queja.index].empleado = dato.nombre_empleado;
+          this.quejas[this.queja.index].descripcion = dato.descripcion;
+          //this.quejas[this.queja.index].correo = dato.email;
           Swal.fire('Datos actualizados');
         } else if (res.status === 2) {
           Swal.fire({
@@ -312,7 +338,7 @@ export class QuejasComponent implements OnInit {
         console.log('Ocurrio un error ', e);
       })
   }
-*/
+
   public applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();

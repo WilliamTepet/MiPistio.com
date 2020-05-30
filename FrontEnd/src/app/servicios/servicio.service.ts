@@ -148,6 +148,15 @@ export class ServicioService {
     .map(res => res);
   }
 
+  public updateQueja(queja): Observable<any> {
+    return  this.http.put<any>(`${this.URL_QUEJAS}/actualizar/${queja.id}`, queja, this.httpOptions)
+    .pipe(
+      retry(3),
+      catchError(this.handleError)
+    )
+    .map(res => res);
+  }
+
   public postUsuario(usuario: any): Observable<any> {
     return this.http.post<any>(`${this.URL_USUARIOS}/agregar`,usuario,this.httpOptions)
       .map(res => res);
