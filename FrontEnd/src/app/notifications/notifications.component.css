@@ -26,3 +26,12 @@ table {
 .barra-horizontal {
     overflow-x: auto;
 }
+
+
+.bg-red-pdf {
+    background-color: #ff0000 !important;
+}
+
+.bg-green-csv {
+    background-color: #008000 !important;
+}

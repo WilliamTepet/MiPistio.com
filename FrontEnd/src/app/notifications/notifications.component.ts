@@ -6,6 +6,7 @@ import { MatTableDataSource } from '@angular/material/table/';
 import * as moment from 'moment';
 import { ServicioService } from 'app/servicios/servicio.service';
 import { dateChangeValidator } from 'app/utils/utils.interface';
+import { GenericService } from './../servicios/generic.service';
 
 
 declare var $: any;
@@ -79,7 +80,7 @@ export class NotificationsComponent implements OnInit {
   mensajeError = '';
 
 
-  constructor(private servicio: ServicioService) {
+  constructor(private servicio: ServicioService, private genericService: GenericService) {
 
     // Formulario para los filtros
     this.searchForm = new FormGroup({
@@ -191,6 +192,26 @@ export class NotificationsComponent implements OnInit {
     }
 
     return dato.toUpperCase()
+  }
+
+  public generarArchivo(boton: HTMLElement) {
+
+    let encabezado = {
+      tipoInforme: `${this.tipoReporte.toUpperCase()}`
+    }
+
+
+    if (boton.id === 'pdf') {
+      this.genericService.generatePdf(
+          encabezado,
+          this.dataSource.data,
+        ).catch(err => console.log('Ocurrio un error al generar el pdf ', err))
+    } else if (boton.id === 'excel') {
+      this.genericService.generateExcel(
+        encabezado,
+        this.dataSource.data,
+      ).catch(err => console.log('Ocurrio un error al generar el excel ', err));
+    }
   }
 
 }
