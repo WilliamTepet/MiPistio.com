@@ -46,10 +46,14 @@ import { RecaptchaModule, RecaptchaFormsModule } from 'ng-recaptcha';
     MatSliderModule,
     MatPaginatorModule,
     MatSortModule,
+<<<<<<< HEAD
     MatDatepickerModule,
     MatExpansionModule,
+    MatNativeDateModule
+=======
     RecaptchaModule,
     RecaptchaFormsModule
+>>>>>>> c47492dac9419f0b7fcd6c4182728d3369a33b07
   ],
   declarations: [
     DashboardComponent,

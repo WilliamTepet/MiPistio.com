@@ -1,0 +1,28 @@
+.bg-blue-pistio {
+    background-color: #1369a0 !important;
+}
+
+.bg-red-pistio {
+    background-color: #e53935 !important;
+}
+
+.center {
+    text-align: center;
+}
+
+table {
+    width: 100%;
+}
+
+.full {
+    width: 100%;
+}
+
+.header {
+    background: #e53935;
+    color: white;
+}
+
+.barra-horizontal {
+    overflow-x: auto;
+}
