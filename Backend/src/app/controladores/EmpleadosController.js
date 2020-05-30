@@ -17,4 +17,5 @@ router.get('', async (req, res) => {
     res.status(status).json(resultado);
 });
 
+
 module.exports = router;

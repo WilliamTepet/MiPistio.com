@@ -1,13 +1,9 @@
 const router = require('express').Router();
 const path = require("path");
 const multer = require("multer");
-
-const { obtenerUsuarios,  insertarUsuarios, verificarCargoUsuario, verificarUsuario, actualizarUsuarios, 
-    verificarRolUsuario, agregarPtoUsuario, verificarCatUsuario, verificarIdCatUsuario, 
-    verificarCargoUsuarioId, verificarCui, verificarEmail } = require('../servicios/UsuarioServicio');
 const { getLogin } = require('../servicios/CatalogosServicio');
 const { verificarRolByEmail } = require('../servicios/UsuarioServicio');
-const { insertarQuejas, ultimaQueja, obtenerQueja } = require('../servicios/QuejaServicio');
+const { insertarQuejas, ultimaQueja, obtenerQueja, actualizarQueja } = require('../servicios/QuejaServicio');
 
 var nombreArchivo = '';
 var storage = multer.diskStorage({
@@ -69,6 +65,21 @@ router.post('/agregar-portal', upload.single('archivo'), async (req, res) => {
     console.log("Request: ", req.body);
     console.log('Nombre archivo ', nombreArchivo);
     res.json({ message: 'ok' });
+});
+
+router.put('/actualizar/:id', async (req, res)=>{
+    //let login = await verificarRolByEmail(req);
+    let datos = req.body;
+    let quejaId = req.params.id;
+    //if (login.auth && login.rolReceptor) {
+        resultado = await actualizarQueja(quejaId, datos);
+        respuesta = {mensaje: "Queja actualizada", status: 1};
+        status = 200;
+    //} else {
+    //    status = 401;
+    //    respuesta = { message: 'Error de autenticación' status: 2 };
+   // }
+    res.status(status).json(respuesta);
 });
 
 
